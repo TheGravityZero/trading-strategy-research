@@ -9,12 +9,11 @@ production-система исполнения.
 
 ## Реализованные стратегии
 
-| Стратегия | Рынок | Текущий результат | Launcher | Отчёт |
+| Стратегия | Секторы | Текущий результат | Launcher | Отчёт |
 |---|---|---|---|---|
-| Cascade reversal | Crypto futures | Gross-эффект стабилен, net отрицательный | `strategies/run_crypto_cascade_reversal.py` | `strategies/reports/crypto-cascade-reversal/` |
-| Four-week reversal | Crypto futures | Отклонена: сильное продолжение пробоя | `strategies/run_crypto_four_week_reversal.py` | `strategies/reports/crypto-four-week-reversal/` |
-| Confirmed weekly pivot | Crypto futures | +3.68% mean net, только 2 сделки | `strategies/run_crypto_weekly_pivot_limit.py` | `strategies/reports/crypto-weekly-pivot-limit/` |
-| Weekly-pivot long | US stocks | +7.98% mean net, только 6 закрытых сделок | `strategies/run_stock_weekly_pivot_long.py` | `strategies/reports/stock-weekly-pivot/` |
+| Cascade reversal | crypto | Gross-эффект стабилен, net отрицательный | `strategies/run_cascade_reversal.py` | `strategies/reports/cascade-reversal/` |
+| Four-week reversal | crypto | Отклонена: сильное продолжение пробоя | `strategies/run_four_week_reversal.py` | `strategies/reports/four-week-reversal/` |
+| Weekly-pivot limit | crypto, it, semiconductors, oil, metals | Зависит от сектора | `strategies/run_weekly_pivot_limit.py` | `strategies/reports/weekly-pivot-limit/` |
 
 OI/absorption, aggTrades microstructure и последовательная проверка гипотез
 находятся в `src/cascades/`, но не представлены как самостоятельные торговые
@@ -55,42 +54,42 @@ python -m pip install -e .
 
 ## Запуск стратегий
 
-### 1. Crypto cascade reversal
+### 1. Cascade reversal — sector `crypto`
 
 Требует локальных Binance Vision klines и futures metrics в `data/raw`.
 
 ```bash
-PYTHONPATH=src python strategies/run_crypto_cascade_reversal.py
+PYTHONPATH=src python strategies/run_cascade_reversal.py
 ```
 
-### 2. Crypto four-week reversal
+### 2. Four-week reversal — sector `crypto`
 
 Использует события годового cascade study:
 
 ```bash
-PYTHONPATH=src python strategies/run_crypto_four_week_reversal.py
+PYTHONPATH=src python strategies/run_four_week_reversal.py
 ```
 
-### 3. Crypto confirmed weekly pivot
+### 3. Weekly-pivot limit — sector `crypto`
 
 Default launcher воспроизводит вариант: entry 5%, заявка 4 часа, TP на pivot,
 постоянный SL −25%, удержание до 90 дней.
 
 ```bash
-PYTHONPATH=src python strategies/run_crypto_weekly_pivot_limit.py
+PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector crypto
 ```
 
-### 4. US stocks weekly-pivot long
+### 4. Weekly-pivot limit — equity sectors
 
 Default launcher воспроизводит выбранный вариант: только long, entry 5% ниже
 pivot, TP +15%, SL −25%, удержание 60 дней. При отсутствии локального CSV
 часовые данные загружаются и кешируются.
 
 ```bash
-PYTHONPATH=src python strategies/run_stock_weekly_pivot_long.py --sector it
-PYTHONPATH=src python strategies/run_stock_weekly_pivot_long.py --sector semiconductors
-PYTHONPATH=src python strategies/run_stock_weekly_pivot_long.py --sector oil
-PYTHONPATH=src python strategies/run_stock_weekly_pivot_long.py --sector metals
+PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector it
+PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector semiconductors
+PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector oil
+PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector metals
 ```
 
 Все launcher-файлы поддерживают `--help` и параметры директорий/стратегии.

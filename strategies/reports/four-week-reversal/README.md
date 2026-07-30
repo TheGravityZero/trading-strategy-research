@@ -1,4 +1,4 @@
-# Crypto four-week reversal
+# Four-week reversal
 
 > Historical result: сохранённые конфигурации рассчитаны на старой
 > десятиактивной вселенной. Для HYPE, BTC, SOL и ETH нужен новый прогон.
@@ -13,7 +13,7 @@
 ## Запуск
 
 ```bash
-PYTHONPATH=src python strategies/run_crypto_four_week_reversal.py
+PYTHONPATH=src python strategies/run_four_week_reversal.py
 ```
 
 ## Бэктест
@@ -36,5 +36,4 @@ PYTHONPATH=src python strategies/run_crypto_four_week_reversal.py
 
 Конфигурации:
 
-- [`reclaim/`](reclaim/) — вход после возврата за недельный уровень.
-- [`offset-4pct/`](offset-4pct/) — лимит на 4% дальше уровня.
+- [`crypto/`](crypto/) — криптовалютный сектор.

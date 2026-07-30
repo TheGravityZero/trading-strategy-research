@@ -1,4 +1,4 @@
-# Crypto cascade reversal
+# Cascade reversal
 
 ## Идея
 
@@ -10,7 +10,7 @@
 ## Запуск
 
 ```bash
-PYTHONPATH=src python strategies/run_crypto_cascade_reversal.py
+PYTHONPATH=src python strategies/run_cascade_reversal.py
 ```
 
 ## Бэктест
@@ -32,6 +32,4 @@ PYTHONPATH=src python strategies/run_crypto_cascade_reversal.py
 
 Конфигурации:
 
-- [`baseline-7d/`](baseline-7d/) — исходный семидневный прототип.
-- [`oi-reversal-7d/`](oi-reversal-7d/) — прототип с OI-фильтром.
-- [`fixed-15m-oi-filter/`](fixed-15m-oi-filter/) — основной годовой прогон.
+- [`crypto/`](crypto/) — криптовалютный сектор.

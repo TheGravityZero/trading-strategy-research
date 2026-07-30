@@ -1,4 +1,4 @@
-# Crypto confirmed weekly-pivot limit
+# Weekly-pivot limit — crypto sector
 
 > Historical result: сохранённые цифры включают активы за пределами текущей
 > вселенной HYPE, BTC, SOL и ETH и требуют повторного бэктеста.
@@ -13,7 +13,7 @@ pivot сроком на четыре часа. Take-profit находится н
 ## Запуск
 
 ```bash
-PYTHONPATH=src python strategies/run_crypto_weekly_pivot_limit.py
+PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector crypto
 ```
 
 ## Бэктест

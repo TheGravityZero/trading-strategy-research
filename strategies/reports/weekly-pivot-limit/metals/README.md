@@ -3,7 +3,7 @@
 Universe: `NEM, GOLD, AEM, FCX, SCCO, AA, CLF, NUE, STLD, MP`.
 
 ```bash
-PYTHONPATH=src python strategies/run_stock_weekly_pivot_long.py --sector metals
+PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector metals
 ```
 
 Default output: `metals/long-tp15-hold60d/`.

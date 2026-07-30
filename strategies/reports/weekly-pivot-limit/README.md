@@ -1,15 +1,18 @@
-# US stocks weekly-pivot
+# Weekly-pivot limit
 
 ## Идея
 
-Стратегия работает только в long. После пробоя подтверждённого недельного
-pivot low ставится лимит на 5% ниже уровня сроком на четыре часа. Take-profit —
-15% от входа, stop-loss — 25%, максимальное удержание — 60 календарных дней.
+Стратегия ищет возврат после пробоя подтверждённого недельного pivot. Рынок
+задаётся сектором, а не названием стратегии.
 
 ## Запуск
 
 ```bash
-PYTHONPATH=src python strategies/run_stock_weekly_pivot_long.py
+PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector crypto
+PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector it
+PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector semiconductors
+PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector oil
+PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector metals
 ```
 
 ## Бэктест
@@ -34,8 +37,9 @@ PYTHONPATH=src python strategies/run_stock_weekly_pivot_long.py
 и выбран после просмотра той же годовой выборки. Два сигнала AMZN являются
 одновременными траншами.
 
-Секторные вселенные:
+Секторы:
 
+- [`crypto/`](crypto/)
 - [`it/`](it/)
 - [`semiconductors/`](semiconductors/)
 - [`oil/`](oil/)

@@ -3,7 +3,7 @@
 Universe: `XOM, CVX, COP, OXY, EOG, SLB, HAL, MPC, VLO, FANG`.
 
 ```bash
-PYTHONPATH=src python strategies/run_stock_weekly_pivot_long.py --sector oil
+PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector oil
 ```
 
 Default output: `oil/long-tp15-hold60d/`.

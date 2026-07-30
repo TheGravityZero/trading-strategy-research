@@ -12,12 +12,13 @@ from cascades.utils.crypto import DEFAULT_CRYPTO_SYMBOLS
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--sector", choices=["crypto"], default="crypto")
     parser.add_argument("--raw-dir", type=Path, default=Path("data/raw"))
     parser.add_argument(
         "--output-dir",
         type=Path,
         default=Path(
-            "strategies/reports/crypto-cascade-reversal/fixed-15m-oi-filter"
+            "strategies/reports/cascade-reversal/crypto/fixed-15m-oi-filter"
         ),
     )
     parser.add_argument(

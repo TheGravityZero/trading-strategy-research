@@ -4,7 +4,7 @@ Universe: `NVDA, AMD, AVGO, QCOM, INTC, MU, AMAT, LRCX, KLAC, TSM, SNDK,
 NBIS, CRWV`.
 
 ```bash
-PYTHONPATH=src python strategies/run_stock_weekly_pivot_long.py \
+PYTHONPATH=src python strategies/run_weekly_pivot_limit.py \
   --sector semiconductors
 ```
 

@@ -176,7 +176,7 @@ def research_command(args: argparse.Namespace) -> None:
 def equities_command(args: argparse.Namespace) -> None:
     symbols = stock_symbols(args.sector, args.symbols)
     output_dir = args.output_dir or (
-        Path("strategies/reports/stock-weekly-pivot")
+        Path("strategies/reports/weekly-pivot-limit")
         / args.sector
         / "latest"
     )
@@ -253,7 +253,7 @@ def build_parser() -> argparse.ArgumentParser:
     study.add_argument("--raw-dir", default="data/raw")
     study.add_argument(
         "--output-dir",
-        default="strategies/reports/crypto-cascade-reversal/study-12m",
+        default="strategies/reports/cascade-reversal/crypto/study-12m",
     )
     study.add_argument("--symbols", nargs="+", default=DEFAULT_CRYPTO_SYMBOLS)
     study.add_argument("--oi-drop-threshold", type=float, default=-0.002)
@@ -328,7 +328,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--output-dir",
         type=Path,
         default=Path(
-            "strategies/reports/crypto-four-week-reversal/latest"
+            "strategies/reports/four-week-reversal/crypto/latest"
         ),
     )
     four_week.add_argument("--include-test", action="store_true")
@@ -354,7 +354,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--output-dir",
         type=Path,
         default=Path(
-            "strategies/reports/crypto-weekly-pivot-limit/latest"
+            "strategies/reports/weekly-pivot-limit/crypto/latest"
         ),
     )
     pivot.add_argument("--include-test", action="store_true")

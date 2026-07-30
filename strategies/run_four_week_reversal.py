@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the crypto four-week extreme reversal strategy."""
+"""Run the four-week extreme reversal strategy for one sector."""
 
 from __future__ import annotations
 
@@ -15,6 +15,7 @@ from cascades.utils.crypto import DEFAULT_CRYPTO_SYMBOLS
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--sector", choices=["crypto"], default="crypto")
     parser.add_argument(
         "--events",
         type=Path,
@@ -28,7 +29,7 @@ def main() -> None:
         "--output-dir",
         type=Path,
         default=Path(
-            "strategies/reports/crypto-four-week-reversal/offset-4pct"
+            "strategies/reports/four-week-reversal/crypto/offset-4pct"
         ),
     )
     parser.add_argument(
