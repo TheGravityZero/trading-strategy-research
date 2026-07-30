@@ -17,7 +17,7 @@ def main() -> None:
     parser.add_argument(
         "--events",
         type=Path,
-        default=Path("reports/study-2025-07_2026-06/events_and_trades.csv"),
+        default=Path("data/processed/crypto-cascade-events.csv"),
     )
     parser.add_argument("--raw-dir", type=Path, default=Path("data/raw"))
     parser.add_argument(

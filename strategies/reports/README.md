@@ -23,8 +23,8 @@
 
 | Configuration | Command | Result |
 |---|---|---|
-| `default-7pct-breakeven` | `python -m cascades.cli weekly-pivot-limit --events reports/study-2025-07_2026-06/events_and_trades.csv --output-dir strategies/reports/crypto-weekly-pivot-limit/default-7pct-breakeven` | Исходный вариант с breakeven |
-| `entry5-breakeven-hold7d` | `python -m cascades.cli weekly-pivot-limit --events reports/study-2025-07_2026-06/events_and_trades.csv --entry-offset-percent 5 --maximum-holding-days 7 --output-dir strategies/reports/crypto-weekly-pivot-limit/entry5-breakeven-hold7d` | 2 сделки, mean net −1.43% |
+| `default-7pct-breakeven` | `python -m cascades.cli weekly-pivot-limit --events data/processed/crypto-cascade-events.csv --output-dir strategies/reports/crypto-weekly-pivot-limit/default-7pct-breakeven` | Исходный вариант с breakeven |
+| `entry5-breakeven-hold7d` | `python -m cascades.cli weekly-pivot-limit --events data/processed/crypto-cascade-events.csv --entry-offset-percent 5 --maximum-holding-days 7 --output-dir strategies/reports/crypto-weekly-pivot-limit/entry5-breakeven-hold7d` | 2 сделки, mean net −1.43% |
 | `entry5-stop25-hold7d` | `python strategies/run_crypto_weekly_pivot_limit.py --maximum-holding-days 7 --output-dir strategies/reports/crypto-weekly-pivot-limit/entry5-stop25-hold7d` | 2 сделки, mean net −2.13% |
 | `entry5-stop25-hold90d` | `python strategies/run_crypto_weekly_pivot_limit.py` | 2 сделки, mean net +3.68% |
 

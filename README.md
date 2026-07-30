@@ -37,7 +37,6 @@ OI/absorption, aggTrades microstructure и последовательная пр
 │   ├── features.py                  # причинные признаки
 │   ├── backtest.py                  # event-level continuation/reversal
 │   └── cli.py                       # общий CLI для исследований
-├── reports/                         # legacy/local research artifacts
 └── tests/
 ```
 

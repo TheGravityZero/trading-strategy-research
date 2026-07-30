@@ -204,7 +204,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     research = subparsers.add_parser("research", help="Run event study and backtest")
     research.add_argument("--raw-dir", default="data/raw")
-    research.add_argument("--output-dir", default="reports/latest")
+    research.add_argument(
+        "--output-dir", default="strategies/reports/research/latest"
+    )
     research.add_argument("--synthetic", action="store_true")
     research.add_argument("--synthetic-rows", type=int, default=10_000)
     research.add_argument(
@@ -224,7 +226,10 @@ def build_parser() -> argparse.ArgumentParser:
         "study", help="Run memory-bounded 12-month multi-symbol study"
     )
     study.add_argument("--raw-dir", default="data/raw")
-    study.add_argument("--output-dir", default="reports/study-12m")
+    study.add_argument(
+        "--output-dir",
+        default="strategies/reports/crypto-cascade-reversal/study-12m",
+    )
     study.add_argument("--symbols", nargs="+", required=True)
     study.add_argument("--oi-drop-threshold", type=float, default=-0.002)
     study.set_defaults(
@@ -241,7 +246,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     hypotheses.add_argument("--events", type=Path, required=True)
     hypotheses.add_argument(
-        "--output-dir", type=Path, default=Path("reports/hypotheses")
+        "--output-dir",
+        type=Path,
+        default=Path("strategies/reports/research/hypotheses"),
     )
     hypotheses.set_defaults(
         func=lambda args: run_hypothesis_analysis(args.events, args.output_dir)
@@ -257,7 +264,7 @@ def build_parser() -> argparse.ArgumentParser:
     confirmation.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("reports/confirmed-absorption"),
+        default=Path("strategies/reports/research/confirmed-absorption"),
     )
     confirmation.set_defaults(
         func=lambda args: run_confirmed_absorption(
@@ -290,7 +297,11 @@ def build_parser() -> argparse.ArgumentParser:
     four_week.add_argument("--events", type=Path, required=True)
     four_week.add_argument("--raw-dir", type=Path, default=Path("data/raw"))
     four_week.add_argument(
-        "--output-dir", type=Path, default=Path("reports/four-week-reversal")
+        "--output-dir",
+        type=Path,
+        default=Path(
+            "strategies/reports/crypto-four-week-reversal/latest"
+        ),
     )
     four_week.add_argument("--include-test", action="store_true")
     four_week.set_defaults(
@@ -307,7 +318,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     pivot.add_argument("--events", type=Path, required=True)
     pivot.add_argument("--raw-dir", type=Path, default=Path("data/raw"))
-    pivot.add_argument("--output-dir", type=Path, default=Path("reports/weekly-pivot-limit"))
+    pivot.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path(
+            "strategies/reports/crypto-weekly-pivot-limit/latest"
+        ),
+    )
     pivot.add_argument("--include-test", action="store_true")
     pivot.add_argument("--entry-offset-percent", type=float, default=7.0)
     pivot.add_argument("--initial-stop-loss-percent", type=float, default=25.0)
@@ -343,7 +360,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--data-dir", type=Path, default=Path("data/us-equities/hourly-1y")
     )
     equities.add_argument(
-        "--output-dir", type=Path, default=Path("reports/us-equities-1y")
+        "--output-dir",
+        type=Path,
+        default=Path("strategies/reports/stock-weekly-pivot/latest"),
     )
     equities.add_argument("--entry-offset-percent", type=float, default=5.0)
     equities.add_argument(
