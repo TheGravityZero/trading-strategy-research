@@ -8,13 +8,14 @@ strategies/
 ├── run_cascade_reversal.py
 ├── run_four_week_reversal.py
 ├── run_weekly_pivot_limit.py
+├── build_results.py
 └── reports/
     └── <strategy>/
-        ├── README.md
-        └── <configuration>/
-            ├── README.md
-            ├── metadata.json          # генерируется локально, ignored
-            └── trades/summary.csv     # генерируется локально, ignored
+        └── <sector>/
+            ├── result.md              # сводка конфигураций, committed
+            └── <configuration>/
+                ├── metadata.json      # генерируется локально, ignored
+                └── trades/summary.csv # генерируется локально, ignored
 ```
 
 Запуск производится из корня репозитория с `PYTHONPATH=src`. Все параметры
@@ -23,4 +24,10 @@ strategies/
 Сектора: `crypto`, `it`, `semiconductors`, `oil`, `metals`. Текущая
 вселенная сектора `crypto`: `HYPEUSDT`, `BTCUSDT`, `SOLUSDT`, `ETHUSDT`.
 
-Сводная таблица конфигураций находится в [`reports/README.md`](reports/README.md).
+После backtest-запусков Markdown-отчёты обновляются командой:
+
+```bash
+PYTHONPATH=src python3 strategies/build_results.py
+```
+
+Сводная матрица находится в [`reports/README.md`](reports/README.md).

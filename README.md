@@ -25,7 +25,7 @@ OI/absorption, aggTrades microstructure и последовательная пр
 .
 ├── strategies/
 │   ├── run_*.py                     # отдельный launcher каждой стратегии
-│   └── reports/                     # strategy/configuration/README + artifacts
+│   └── reports/                     # strategy/sector/result.md + artifacts
 ├── src/trading_strategy/
 │   ├── strategies/                  # торговая логика и симуляция сделок
 │   ├── utils/

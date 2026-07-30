@@ -60,6 +60,10 @@ def load_crypto_symbol(
 
     # A metric stamped at t is conservatively available to a strategy at t+1m.
     metrics["timestamp"] += pd.Timedelta(minutes=1)
+    # Pandas 2.0+ requires exact datetime units for merge_asof keys. Binance
+    # kline and metrics archives may decode to milliseconds and microseconds.
+    klines["timestamp"] = klines["timestamp"].astype("datetime64[ns, UTC]")
+    metrics["timestamp"] = metrics["timestamp"].astype("datetime64[ns, UTC]")
     merged = pd.merge_asof(
         klines,
         metrics,
