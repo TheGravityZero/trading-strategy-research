@@ -93,21 +93,21 @@ def sector_result(sector: str) -> None:
 
 def index_result() -> None:
     rows = [
-        "# Backtest results",
+        "# Results",
         "",
         "В репозитории оставлена одна объединённая стратегия. Crypto использует "
         "15m, акции — 1h; торговая логика и конфигурация одинаковы.",
         "",
-        "[Описание стратегии](weekly-pivot-limit/README.md)",
+        "[Описание стратегии](README.md)",
         "",
         "| crypto | it | semiconductors | oil | metals |",
         "|---|---|---|---|---|",
         "| " + " | ".join(
-            f"[result](weekly-pivot-limit/{sector}/result.md)"
+            f"[result]({sector}/result.md)"
             for sector in SECTORS
         ) + " |",
     ]
-    (REPORTS / "README.md").write_text(
+    (REPORTS / "weekly-pivot-limit" / "RESULTS.md").write_text(
         "\n".join(rows) + "\n", encoding="utf-8"
     )
 

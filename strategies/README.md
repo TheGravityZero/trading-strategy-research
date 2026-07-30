@@ -28,4 +28,5 @@ strategies/
 PYTHONPATH=src python3 strategies/build_results.py
 ```
 
-Сводная матрица находится в [`reports/README.md`](reports/README.md).
+Сводная матрица находится в
+[`reports/weekly-pivot-limit/RESULTS.md`](reports/weekly-pivot-limit/RESULTS.md).

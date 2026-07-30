@@ -98,6 +98,8 @@ PYTHONPATH=src python3 strategies/run_weekly_pivot_limit.py \
 
 ## Результаты
 
+[Общая таблица результатов](RESULTS.md)
+
 Сводные отчёты по конфигурациям находятся в каталогах секторов:
 
 - [crypto](crypto/result.md)
