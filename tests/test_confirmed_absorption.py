@@ -1,8 +1,8 @@
 import unittest
 
-from cascades.confirmed_absorption import _evaluate_event
-from cascades.features import build_features
-from cascades.synthetic import make_synthetic_klines
+from trading_strategy.confirmed_absorption import _evaluate_event
+from trading_strategy.features import build_features
+from trading_strategy.synthetic import make_synthetic_klines
 
 
 class ConfirmedAbsorptionTest(unittest.TestCase):

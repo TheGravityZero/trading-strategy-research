@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from cascades.hypotheses import cluster_bootstrap_ci
+from trading_strategy.hypotheses import cluster_bootstrap_ci
 
 
 class HypothesisTest(unittest.TestCase):

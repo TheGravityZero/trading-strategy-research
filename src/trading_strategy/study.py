@@ -11,7 +11,7 @@ from .features import build_features
 from .utils.crypto import load_crypto_symbol
 
 
-# Public compatibility alias. New code should import from cascades.utils.crypto.
+# Public compatibility alias. New code should import from trading_strategy.utils.crypto.
 load_symbol = load_crypto_symbol
 
 

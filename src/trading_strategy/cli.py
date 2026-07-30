@@ -136,7 +136,7 @@ def research_command(args: argparse.Namespace) -> None:
     else:
         paths = sorted(Path(args.raw_dir).glob("*/*m/*.zip"))
         if not paths:
-            raise SystemExit("No archives found. Run `cascades download` first.")
+            raise SystemExit("No archives found. Run `trading_strategy download` first.")
         frames = []
         for path in paths:
             frame = read_kline_archive(path)
@@ -196,7 +196,7 @@ def equities_command(args: argparse.Namespace) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="cascades")
+    parser = argparse.ArgumentParser(prog="trading_strategy")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     download = subparsers.add_parser("download", help="Download Binance Vision data")

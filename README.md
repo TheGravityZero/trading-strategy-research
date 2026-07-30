@@ -16,7 +16,7 @@ production-система исполнения.
 | Weekly-pivot limit | crypto, it, semiconductors, oil, metals | Зависит от сектора | `strategies/run_weekly_pivot_limit.py` | `strategies/reports/weekly-pivot-limit/` |
 
 OI/absorption, aggTrades microstructure и последовательная проверка гипотез
-находятся в `src/cascades/`, но не представлены как самостоятельные торговые
+находятся в `src/trading_strategy/`, но не представлены как самостоятельные торговые
 стратегии: это фильтры и исследовательские анализы.
 
 ## Структура
@@ -26,7 +26,7 @@ OI/absorption, aggTrades microstructure и последовательная пр
 ├── strategies/
 │   ├── run_*.py                     # отдельный launcher каждой стратегии
 │   └── reports/                     # strategy/configuration/README + artifacts
-├── src/cascades/
+├── src/trading_strategy/
 │   ├── strategies/                  # торговая логика и симуляция сделок
 │   ├── utils/
 │   │   ├── crypto.py                # Binance archives и causal OI merge
@@ -99,11 +99,11 @@ PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector metals
 Пример загрузки дневных архивов минутных свечей и futures metrics:
 
 ```bash
-PYTHONPATH=src python -m cascades.cli download \
+PYTHONPATH=src python -m trading_strategy.cli download \
   --symbols HYPEUSDT BTCUSDT SOLUSDT ETHUSDT \
   --start 2025-05-01 --end 2025-05-31
 
-PYTHONPATH=src python -m cascades.cli download \
+PYTHONPATH=src python -m trading_strategy.cli download \
   --dataset metrics \
   --symbols HYPEUSDT BTCUSDT SOLUSDT ETHUSDT \
   --start 2025-05-01 --end 2025-05-31

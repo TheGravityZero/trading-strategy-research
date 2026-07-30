@@ -2,11 +2,11 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from cascades.backtest import BacktestConfig, run_event_backtest, summarize
-from cascades.events import DetectorConfig, attach_forward_returns, detect_events
-from cascades.features import build_features
-from cascades.pipeline import run_pipeline
-from cascades.synthetic import make_synthetic_klines
+from trading_strategy.backtest import BacktestConfig, run_event_backtest, summarize
+from trading_strategy.events import DetectorConfig, attach_forward_returns, detect_events
+from trading_strategy.features import build_features
+from trading_strategy.pipeline import run_pipeline
+from trading_strategy.synthetic import make_synthetic_klines
 
 
 class PrototypeTest(unittest.TestCase):

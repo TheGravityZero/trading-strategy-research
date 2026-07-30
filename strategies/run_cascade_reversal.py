@@ -6,8 +6,8 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from cascades.study import run_large_study
-from cascades.utils.crypto import DEFAULT_CRYPTO_SYMBOLS
+from trading_strategy.study import run_large_study
+from trading_strategy.utils.crypto import DEFAULT_CRYPTO_SYMBOLS
 
 
 def main() -> None:

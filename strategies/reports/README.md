@@ -12,8 +12,8 @@
 
 | Configuration | Command | Result |
 |---|---|---|
-| `baseline-7d` | `python -m cascades.cli research --strategy-mode auto` | Исходный baseline, net отрицательный |
-| `oi-reversal-7d` | `python -m cascades.cli research --strategy-mode reversal --oi-drop-threshold -0.002` | Gross reversal, издержки не покрыты |
+| `baseline-7d` | `python -m trading_strategy.cli research --strategy-mode auto` | Исходный baseline, net отрицательный |
+| `oi-reversal-7d` | `python -m trading_strategy.cli research --strategy-mode reversal --oi-drop-threshold -0.002` | Gross reversal, издержки не покрыты |
 | `fixed-15m-oi-filter` | `python strategies/run_cascade_reversal.py` | 4,626 событий, mean net около −11.4 bps |
 
 ## Four-week reversal / crypto
@@ -27,8 +27,8 @@
 
 | Configuration | Command | Result |
 |---|---|---|
-| `default-7pct-breakeven` | `python -m cascades.cli weekly-pivot-limit --events data/processed/crypto-cascade-events.csv --output-dir strategies/reports/weekly-pivot-limit/crypto/default-7pct-breakeven` | Исходный вариант с breakeven |
-| `entry5-breakeven-hold7d` | `python -m cascades.cli weekly-pivot-limit --events data/processed/crypto-cascade-events.csv --entry-offset-percent 5 --maximum-holding-days 7 --output-dir strategies/reports/weekly-pivot-limit/crypto/entry5-breakeven-hold7d` | 2 сделки, mean net −1.43% |
+| `default-7pct-breakeven` | `python -m trading_strategy.cli weekly-pivot-limit --events data/processed/crypto-cascade-events.csv --output-dir strategies/reports/weekly-pivot-limit/crypto/default-7pct-breakeven` | Исходный вариант с breakeven |
+| `entry5-breakeven-hold7d` | `python -m trading_strategy.cli weekly-pivot-limit --events data/processed/crypto-cascade-events.csv --entry-offset-percent 5 --maximum-holding-days 7 --output-dir strategies/reports/weekly-pivot-limit/crypto/entry5-breakeven-hold7d` | 2 сделки, mean net −1.43% |
 | `entry5-stop25-hold7d` | `python strategies/run_weekly_pivot_limit.py --sector crypto --maximum-holding-days 7 --output-dir strategies/reports/weekly-pivot-limit/crypto/entry5-stop25-hold7d` | 2 сделки, mean net −2.13% |
 | `entry5-stop25-hold90d` | `python strategies/run_weekly_pivot_limit.py --sector crypto` | 2 сделки, mean net +3.68% |
 

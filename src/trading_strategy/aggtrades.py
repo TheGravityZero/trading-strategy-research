@@ -37,7 +37,7 @@ def fetch_window(
         )
         request = urllib.request.Request(
             f"{BASE}?{query}",
-            headers={"User-Agent": "liquidation-cascades-research/0.1"},
+            headers={"User-Agent": "liquidation-trading_strategy-research/0.1"},
         )
         with urllib.request.urlopen(request, timeout=30) as response:
             payload = json.loads(response.read())

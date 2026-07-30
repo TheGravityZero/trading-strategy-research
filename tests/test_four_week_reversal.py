@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from cascades.strategies.four_week_reversal import (
+from trading_strategy.strategies.four_week_reversal import (
     FourWeekReversalConfig,
     _classify_event,
     add_four_week_levels,

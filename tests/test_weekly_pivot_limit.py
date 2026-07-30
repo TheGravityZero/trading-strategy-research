@@ -2,7 +2,7 @@ import unittest
 
 import pandas as pd
 
-from cascades.strategies.confirmed_weekly_pivot import (
+from trading_strategy.strategies.confirmed_weekly_pivot import (
     WeeklyPivotLimitConfig,
     _simulate,
 )

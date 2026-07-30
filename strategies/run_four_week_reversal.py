@@ -6,11 +6,11 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from cascades.strategies.four_week_reversal import (
+from trading_strategy.strategies.four_week_reversal import (
     FourWeekReversalConfig,
     run_four_week_strategy,
 )
-from cascades.utils.crypto import DEFAULT_CRYPTO_SYMBOLS
+from trading_strategy.utils.crypto import DEFAULT_CRYPTO_SYMBOLS
 
 
 def main() -> None:

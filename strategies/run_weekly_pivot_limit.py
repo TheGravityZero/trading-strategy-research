@@ -6,16 +6,16 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from cascades.strategies.confirmed_weekly_pivot import (
+from trading_strategy.strategies.confirmed_weekly_pivot import (
     WeeklyPivotLimitConfig,
     run_weekly_pivot_strategy,
 )
-from cascades.strategies.us_equity_weekly_pivot import (
+from trading_strategy.strategies.us_equity_weekly_pivot import (
     EquityPivotConfig,
     run_equity_study,
 )
-from cascades.utils.crypto import DEFAULT_CRYPTO_SYMBOLS
-from cascades.utils.stocks import STOCK_UNIVERSES, stock_symbols
+from trading_strategy.utils.crypto import DEFAULT_CRYPTO_SYMBOLS
+from trading_strategy.utils.stocks import STOCK_UNIVERSES, stock_symbols
 
 
 SECTORS = ["crypto", *STOCK_UNIVERSES]

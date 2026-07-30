@@ -3,9 +3,9 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "liquidation-cascades"
+name = "trading-strategy-research"
 version = "0.1.0"
-description = "Open-data prototype for crypto liquidation-cascade proxy signals"
+description = "Reproducible trading-strategy research for crypto and US equities"
 requires-python = ">=3.10"
 dependencies = [
   "numpy>=1.24",
@@ -13,8 +13,7 @@ dependencies = [
 ]
 
 [project.scripts]
-cascades = "cascades.cli:main"
+trading-strategy = "trading_strategy.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-

@@ -98,7 +98,7 @@ def download_daily_kline(
     destination.parent.mkdir(parents=True, exist_ok=True)
     request = urllib.request.Request(
         archive_url(symbol, interval, day),
-        headers={"User-Agent": "liquidation-cascades-research/0.1"},
+        headers={"User-Agent": "liquidation-trading_strategy-research/0.1"},
     )
     try:
         payload = _download(request, timeout)
@@ -130,7 +130,7 @@ def download_daily_metrics(
     destination.parent.mkdir(parents=True, exist_ok=True)
     request = urllib.request.Request(
         metrics_archive_url(symbol, day),
-        headers={"User-Agent": "liquidation-cascades-research/0.1"},
+        headers={"User-Agent": "liquidation-trading_strategy-research/0.1"},
     )
     try:
         payload = _download(request, timeout)
@@ -162,7 +162,7 @@ def download_daily_aggtrades(
         f"aggTrades/{symbol}/{filename}"
     )
     request = urllib.request.Request(
-        url, headers={"User-Agent": "liquidation-cascades-research/0.1"}
+        url, headers={"User-Agent": "liquidation-trading_strategy-research/0.1"}
     )
     payload = _download(request, timeout)
     with zipfile.ZipFile(io.BytesIO(payload)) as archive:
@@ -215,7 +215,7 @@ def download_monthly_archive(
     destination.parent.mkdir(parents=True, exist_ok=True)
     request = urllib.request.Request(
         monthly_archive_url(symbol, interval, month, dataset),
-        headers={"User-Agent": "liquidation-cascades-research/0.1"},
+        headers={"User-Agent": "liquidation-trading_strategy-research/0.1"},
     )
     try:
         payload = _download(request, timeout)

@@ -1,8 +1,8 @@
 """Compatibility exports for the refactored US-equity strategy.
 
 New code should import strategy logic from
-``cascades.strategies.us_equity_weekly_pivot`` and reusable data helpers from
-``cascades.utils.stocks``.
+``trading_strategy.strategies.us_equity_weekly_pivot`` and reusable data helpers from
+``trading_strategy.utils.stocks``.
 """
 
 from .strategies.us_equity_weekly_pivot import (

@@ -3,8 +3,8 @@ from unittest.mock import patch
 
 import pandas as pd
 
-from cascades.us_equities import EquityPivotConfig, backtest_equity
-from cascades.utils.stocks import STOCK_UNIVERSES, stock_symbols
+from trading_strategy.us_equities import EquityPivotConfig, backtest_equity
+from trading_strategy.utils.stocks import STOCK_UNIVERSES, stock_symbols
 
 
 class EquityBacktestTest(unittest.TestCase):
@@ -38,7 +38,7 @@ class EquityBacktestTest(unittest.TestCase):
         )
         config = EquityPivotConfig(entry_offset_percent=5, order_lifetime_hours=200)
         with patch(
-            "cascades.strategies.us_equity_weekly_pivot."
+            "trading_strategy.strategies.us_equity_weekly_pivot."
             "confirmed_stock_weekly_pivots",
             return_value=pivots,
         ):
@@ -69,7 +69,7 @@ class EquityBacktestTest(unittest.TestCase):
             }]
         )
         with patch(
-            "cascades.strategies.us_equity_weekly_pivot."
+            "trading_strategy.strategies.us_equity_weekly_pivot."
             "confirmed_stock_weekly_pivots",
             return_value=pivots,
         ):
