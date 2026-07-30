@@ -8,3 +8,6 @@ data/
 reports/**/*.csv
 reports/**/*.csv.gz
 reports/**/*.json
+strategies/reports/**/*.csv
+strategies/reports/**/*.csv.gz
+strategies/reports/**/*.json

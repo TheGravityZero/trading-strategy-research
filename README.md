@@ -11,10 +11,10 @@ production-система исполнения.
 
 | Стратегия | Рынок | Текущий результат | Launcher | Отчёт |
 |---|---|---|---|---|
-| Cascade reversal | Crypto futures | Gross-эффект стабилен, net отрицательный | `scripts/run_crypto_cascade_reversal.py` | `reports/strategies/crypto-cascade-reversal/` |
-| Four-week reversal | Crypto futures | Отклонена: сильное продолжение пробоя | `scripts/run_crypto_four_week_reversal.py` | `reports/strategies/crypto-four-week-reversal/` |
-| Confirmed weekly pivot | Crypto futures | +3.68% mean net, только 2 сделки | `scripts/run_crypto_weekly_pivot_limit.py` | `reports/strategies/crypto-weekly-pivot-limit/` |
-| Weekly-pivot long | US stocks | +7.98% mean net, только 6 закрытых сделок | `scripts/run_stock_weekly_pivot_long.py` | `reports/strategies/stock-weekly-pivot-long/` |
+| Cascade reversal | Crypto futures | Gross-эффект стабилен, net отрицательный | `strategies/run_crypto_cascade_reversal.py` | `strategies/reports/crypto-cascade-reversal/` |
+| Four-week reversal | Crypto futures | Отклонена: сильное продолжение пробоя | `strategies/run_crypto_four_week_reversal.py` | `strategies/reports/crypto-four-week-reversal/` |
+| Confirmed weekly pivot | Crypto futures | +3.68% mean net, только 2 сделки | `strategies/run_crypto_weekly_pivot_limit.py` | `strategies/reports/crypto-weekly-pivot-limit/` |
+| Weekly-pivot long | US stocks | +7.98% mean net, только 6 закрытых сделок | `strategies/run_stock_weekly_pivot_long.py` | `strategies/reports/stock-weekly-pivot/` |
 
 OI/absorption, aggTrades microstructure и последовательная проверка гипотез
 находятся в `src/cascades/`, но не представлены как самостоятельные торговые
@@ -24,7 +24,9 @@ OI/absorption, aggTrades microstructure и последовательная пр
 
 ```text
 .
-├── scripts/                         # отдельный launcher каждой стратегии
+├── strategies/
+│   ├── run_*.py                     # отдельный launcher каждой стратегии
+│   └── reports/                     # strategy/configuration/README + artifacts
 ├── src/cascades/
 │   ├── strategies/                  # торговая логика и симуляция сделок
 │   ├── utils/
@@ -35,9 +37,7 @@ OI/absorption, aggTrades microstructure и последовательная пр
 │   ├── features.py                  # причинные признаки
 │   ├── backtest.py                  # event-level continuation/reversal
 │   └── cli.py                       # общий CLI для исследований
-├── reports/
-│   ├── strategies/                  # описание и результаты каждой стратегии
-│   └── ...                          # подробные CSV/JSON артефакты прогонов
+├── reports/                         # legacy/local research artifacts
 └── tests/
 ```
 
@@ -61,7 +61,7 @@ python -m pip install -e .
 Требует локальных Binance Vision klines и futures metrics в `data/raw`.
 
 ```bash
-PYTHONPATH=src python scripts/run_crypto_cascade_reversal.py
+PYTHONPATH=src python strategies/run_crypto_cascade_reversal.py
 ```
 
 ### 2. Crypto four-week reversal
@@ -69,7 +69,7 @@ PYTHONPATH=src python scripts/run_crypto_cascade_reversal.py
 Использует события годового cascade study:
 
 ```bash
-PYTHONPATH=src python scripts/run_crypto_four_week_reversal.py
+PYTHONPATH=src python strategies/run_crypto_four_week_reversal.py
 ```
 
 ### 3. Crypto confirmed weekly pivot
@@ -78,7 +78,7 @@ Default launcher воспроизводит вариант: entry 5%, заявк
 постоянный SL −25%, удержание до 90 дней.
 
 ```bash
-PYTHONPATH=src python scripts/run_crypto_weekly_pivot_limit.py
+PYTHONPATH=src python strategies/run_crypto_weekly_pivot_limit.py
 ```
 
 ### 4. US stocks weekly-pivot long
@@ -88,7 +88,7 @@ pivot, TP +15%, SL −25%, удержание 60 дней. При отсутст
 часовые данные загружаются и кешируются.
 
 ```bash
-PYTHONPATH=src python scripts/run_stock_weekly_pivot_long.py
+PYTHONPATH=src python strategies/run_stock_weekly_pivot_long.py
 ```
 
 Все launcher-файлы поддерживают `--help` и параметры директорий/стратегии.
@@ -123,10 +123,10 @@ PYTHONPATH=src python -m cascades.cli download \
 
 ## Отчёты
 
-Краткие карточки стратегий находятся в
-[`reports/strategies`](reports/strategies). Подробные `RESEARCH_NOTE.md`
-фиксируют конфигурацию, выборку, результаты, решение и ограничения. Большие
-CSV/JSON/GZip артефакты генерируются локально и исключены из Git.
+Карточки стратегий и отчёты отдельных конфигураций находятся в
+[`strategies/reports`](strategies/reports). Каждый каталог конфигурации
+фиксирует параметры, выборку, результаты, решение и ограничения. Большие
+CSV/JSON/GZip артефакты генерируются рядом с README и исключены из Git.
 
 ## Тесты
 
