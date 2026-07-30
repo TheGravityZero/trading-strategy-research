@@ -1,4 +1,4 @@
-"""Reusable data-loading utilities for Binance USD-M futures research."""
+"""Reusable Binance OHLC loading utilities."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from ..data import read_kline_archive, read_metrics_archive
+from ..data import read_kline_archive
 
 
 DEFAULT_CRYPTO_SYMBOLS = [
@@ -17,79 +17,47 @@ DEFAULT_CRYPTO_SYMBOLS = [
 ]
 
 
-def crypto_archive_paths(
-    raw_dir: Path, symbol: str, dataset: str
-) -> list[Path]:
-    """Return locally cached archive paths for one crypto symbol."""
-    if dataset == "klines":
-        return sorted((raw_dir / symbol / "1m" / "monthly").glob("*.zip"))
-    if dataset == "metrics":
-        return sorted(
-            path
-            for path in (raw_dir / symbol / "metrics").glob("**/*.zip")
-            if "monthly" not in path.parts
-        )
-    raise ValueError(f"Unsupported crypto dataset: {dataset}")
+def crypto_archive_paths(raw_dir: Path, symbol: str) -> list[Path]:
+    """Prefer cached 15m+ archives, with legacy 1m data as a fallback."""
+    for interval in ("15m", "30m", "1h", "4h", "1d", "1m"):
+        paths = sorted((raw_dir / symbol / interval).glob("**/*.zip"))
+        if paths:
+            return paths
+    return []
 
 
-def load_crypto_symbol(
-    raw_dir: Path, symbol: str, start: pd.Timestamp, end: pd.Timestamp
-) -> tuple[pd.DataFrame, dict]:
-    """Load and causally merge minute klines with delayed futures metrics."""
-    kline_paths = crypto_archive_paths(raw_dir, symbol, "klines")
-    metric_paths = crypto_archive_paths(raw_dir, symbol, "metrics")
-    if not kline_paths:
-        raise FileNotFoundError(f"No minute kline archives for {symbol}")
-    if not metric_paths:
-        raise FileNotFoundError(f"No futures metric archives for {symbol}")
-
-    klines = pd.concat(
-        [read_kline_archive(path, symbol) for path in kline_paths],
+def load_crypto_ohlc(
+    raw_dir: Path,
+    symbol: str,
+    start: pd.Timestamp,
+    end: pd.Timestamp,
+    interval: str = "15min",
+) -> pd.DataFrame:
+    """Load Binance klines and aggregate them to an interval of at least 15m."""
+    offset = pd.tseries.frequencies.to_offset(interval)
+    if pd.Timedelta(offset) < pd.Timedelta(minutes=15):
+        raise ValueError("Crypto strategy interval must be at least 15 minutes")
+    paths = crypto_archive_paths(raw_dir, symbol)
+    if not paths:
+        raise FileNotFoundError(f"No kline archives for {symbol}")
+    frame = pd.concat(
+        [read_kline_archive(path, symbol) for path in paths],
         ignore_index=True,
-    ).sort_values("timestamp")
-    metrics = pd.concat(
-        [read_metrics_archive(path) for path in metric_paths],
-        ignore_index=True,
-    ).sort_values("timestamp")
-    klines = klines[
-        (klines["timestamp"] >= start) & (klines["timestamp"] < end)
-    ].drop_duplicates("timestamp")
-    metrics = metrics[
-        (metrics["timestamp"] >= start) & (metrics["timestamp"] < end)
-    ].drop_duplicates("timestamp")
-
-    # A metric stamped at t is conservatively available to a strategy at t+1m.
-    metrics["timestamp"] += pd.Timedelta(minutes=1)
-    # Pandas 2.0+ requires exact datetime units for merge_asof keys. Binance
-    # kline and metrics archives may decode to milliseconds and microseconds.
-    klines["timestamp"] = klines["timestamp"].astype("datetime64[ns, UTC]")
-    metrics["timestamp"] = metrics["timestamp"].astype("datetime64[ns, UTC]")
-    merged = pd.merge_asof(
-        klines,
-        metrics,
-        on="timestamp",
-        by="symbol",
-        direction="backward",
-        tolerance=pd.Timedelta(minutes=5),
     )
-    manifest = {
-        "symbol": symbol,
-        "kline_archives": len(kline_paths),
-        "metric_archives": len(metric_paths),
-        "kline_rows": len(klines),
-        "metric_rows": len(metrics),
-        "minute_gaps": int(
-            (klines["timestamp"].diff().dropna() != pd.Timedelta(minutes=1)).sum()
-        ),
-        "metric_gaps": int(
-            (metrics["timestamp"].diff().dropna() != pd.Timedelta(minutes=5)).sum()
-        ),
-        "oi_coverage": float(merged["sum_open_interest"].notna().mean()),
-        "first_timestamp": str(klines["timestamp"].min()),
-        "last_timestamp": str(klines["timestamp"].max()),
-    }
-    return merged, manifest
-
-
-# Backwards-friendly name for strategy modules written before the utils split.
-load_symbol = load_crypto_symbol
+    frame = frame[
+        (frame["timestamp"] >= start) & (frame["timestamp"] < end)
+    ].sort_values("timestamp")
+    return (
+        frame.set_index("timestamp")
+        .resample(interval)
+        .agg(
+            symbol=("symbol", "first"),
+            open=("open", "first"),
+            high=("high", "max"),
+            low=("low", "min"),
+            close=("close", "last"),
+            volume=("volume", "sum"),
+        )
+        .dropna(subset=["open", "high", "low", "close"])
+        .reset_index()
+    )

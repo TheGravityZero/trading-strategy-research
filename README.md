@@ -1,8 +1,7 @@
 # Trading Strategy Research
 
-Исследовательский репозиторий для воспроизводимых event-driven бэктестов на
-криптовалютах и американских акциях. Основная тема — отскок после экстремального
-пробоя многонедельного уровня или proxy ликвидационного каскада.
+Исследовательский репозиторий для воспроизводимых бэктестов единой
+weekly-pivot стратегии на криптовалютах и американских акциях.
 
 Это исследовательский код, а не инвестиционная рекомендация и не готовая
 production-система исполнения.
@@ -11,30 +10,21 @@ production-система исполнения.
 
 | Стратегия | Секторы | Текущий результат | Launcher | Отчёт |
 |---|---|---|---|---|
-| Cascade reversal | crypto | Gross-эффект стабилен, net отрицательный | `strategies/run_cascade_reversal.py` | `strategies/reports/cascade-reversal/` |
-| Four-week reversal | crypto | Отклонена: сильное продолжение пробоя | `strategies/run_four_week_reversal.py` | `strategies/reports/four-week-reversal/` |
 | Weekly-pivot limit | crypto, it, semiconductors, oil, metals | Зависит от сектора | `strategies/run_weekly_pivot_limit.py` | `strategies/reports/weekly-pivot-limit/` |
-
-OI/absorption, aggTrades microstructure и последовательная проверка гипотез
-находятся в `src/trading_strategy/`, но не представлены как самостоятельные торговые
-стратегии: это фильтры и исследовательские анализы.
 
 ## Структура
 
 ```text
 .
 ├── strategies/
-│   ├── run_*.py                     # отдельный launcher каждой стратегии
+│   ├── run_weekly_pivot_limit.py    # общий launcher всех рынков
 │   └── reports/                     # strategy/sector/result.md + artifacts
 ├── src/trading_strategy/
 │   ├── strategies/                  # торговая логика и симуляция сделок
 │   ├── utils/
-│   │   ├── crypto.py                # Binance archives и causal OI merge
+│   │   ├── crypto.py                # Binance archives и 15m+ OHLC
 │   │   └── stocks.py                # hourly stocks, NY time, weekly pivots
 │   ├── data.py                      # низкоуровневые Binance readers/downloaders
-│   ├── events.py                    # proxy cascade detector
-│   ├── features.py                  # причинные признаки
-│   ├── backtest.py                  # event-level continuation/reversal
 │   └── cli.py                       # общий CLI для исследований
 └── tests/
 ```
@@ -54,38 +44,14 @@ python -m pip install -e .
 
 ## Запуск стратегий
 
-### 1. Cascade reversal — sector `crypto`
+### Weekly-pivot limit
 
-Требует локальных Binance Vision klines и futures metrics в `data/raw`.
-
-```bash
-PYTHONPATH=src python strategies/run_cascade_reversal.py
-```
-
-### 2. Four-week reversal — sector `crypto`
-
-Использует события годового cascade study:
-
-```bash
-PYTHONPATH=src python strategies/run_four_week_reversal.py
-```
-
-### 3. Weekly-pivot limit — sector `crypto`
-
-Default launcher воспроизводит вариант: entry 5%, заявка 4 часа, TP на pivot,
-постоянный SL −25%, удержание до 90 дней.
+Для всех рынков используется одна логика: только long, entry 5% ниже
+подтверждённого weekly pivot, TP +15%, SL −25%, заявка 4 часа и удержание
+до 60 дней. Crypto агрегируется в 15-минутные свечи, акции работают на 1h.
 
 ```bash
 PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector crypto
-```
-
-### 4. Weekly-pivot limit — equity sectors
-
-Default launcher воспроизводит выбранный вариант: только long, entry 5% ниже
-pivot, TP +15%, SL −25%, удержание 60 дней. При отсутствии локального CSV
-часовые данные загружаются и кешируются.
-
-```bash
 PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector it
 PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector semiconductors
 PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector oil
@@ -96,15 +62,11 @@ PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector metals
 
 ## Загрузка криптоданных
 
-Пример загрузки дневных архивов минутных свечей и futures metrics:
+Пример загрузки архивов свечей. Стратегия агрегирует их до 15m и не принимает
+таймфреймы ниже 15 минут:
 
 ```bash
 PYTHONPATH=src python -m trading_strategy.cli download \
-  --symbols HYPEUSDT BTCUSDT SOLUSDT ETHUSDT \
-  --start 2025-05-01 --end 2025-05-31
-
-PYTHONPATH=src python -m trading_strategy.cli download \
-  --dataset metrics \
   --symbols HYPEUSDT BTCUSDT SOLUSDT ETHUSDT \
   --start 2025-05-01 --end 2025-05-31
 ```
@@ -114,20 +76,16 @@ PYTHONPATH=src python -m trading_strategy.cli download \
 ## Методология
 
 - Недельные уровни формируются только после завершения необходимых свечей.
-- Futures metrics получают консервативную задержку публикации в одну минуту.
-- Хронологические research, validation и test не перемешиваются.
-- Синхронные криптособытия объединяются в market clusters.
-- В часовых акциях take-profit запрещён в свече исполнения, поскольку OHLC не
+- Take-profit запрещён в свече исполнения, поскольку OHLC не
   восстанавливает порядок intrabar extremes; stop в ней остаётся возможным.
 - Открытые позиции не включаются в realised performance.
 - Комиссии и slippage задаются явно в конфигурации стратегии.
 
 ## Отчёты
 
-Карточки стратегий и отчёты отдельных конфигураций находятся в
-[`strategies/reports`](strategies/reports). Каждый каталог конфигурации
-фиксирует параметры, выборку, результаты, решение и ограничения. Большие
-CSV/JSON/GZip артефакты генерируются рядом с README и исключены из Git.
+Сводные результаты разных конфигураций находятся в sector-level `result.md`
+в [`strategies/reports`](strategies/reports). CSV/JSON-артефакты генерируются
+локально и исключены из Git.
 
 ## Тесты
 
@@ -140,7 +98,7 @@ PYTHONPATH=src python -m unittest discover -s tests -v
 - Yahoo chart endpoint не является гарантированным production data feed.
 - Часовые OHLC не позволяют точно восстановить очередь и intrabar path.
 - Для шортов акций не моделируются borrow availability и borrow fee.
-- Для perpetual futures не во всех стратегиях учтён funding.
-- Event-level сделки не являются capital-constrained portfolio simulation.
+- Для perpetual futures не учтён funding.
+- Сделки не объединены в capital-constrained portfolio simulation.
 - Лучший вариант акций выбран на короткой годовой выборке и требует
   out-of-sample проверки на более длинной истории.

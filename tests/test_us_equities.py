@@ -3,7 +3,10 @@ from unittest.mock import patch
 
 import pandas as pd
 
-from trading_strategy.us_equities import EquityPivotConfig, backtest_equity
+from trading_strategy.strategies.weekly_pivot_limit import (
+    WeeklyPivotConfig,
+    backtest_weekly_pivot,
+)
 from trading_strategy.utils.stocks import STOCK_UNIVERSES, stock_symbols
 
 
@@ -36,13 +39,13 @@ class EquityBacktestTest(unittest.TestCase):
                 "available_at": timestamps[6],
             }]
         )
-        config = EquityPivotConfig(entry_offset_percent=5, order_lifetime_hours=200)
+        config = WeeklyPivotConfig(entry_offset_percent=5, order_lifetime_hours=200)
         with patch(
-            "trading_strategy.strategies.us_equity_weekly_pivot."
+            "trading_strategy.strategies.weekly_pivot_limit."
             "confirmed_stock_weekly_pivots",
             return_value=pivots,
         ):
-            result = backtest_equity(frame, config)
+            result = backtest_weekly_pivot(frame, config)
         self.assertTrue(result.iloc[0].order_filled)
         self.assertEqual(result.iloc[0].entry_price, 95)
         self.assertEqual(result.iloc[0].exit_reason, "take_profit")
@@ -69,9 +72,9 @@ class EquityBacktestTest(unittest.TestCase):
             }]
         )
         with patch(
-            "trading_strategy.strategies.us_equity_weekly_pivot."
+            "trading_strategy.strategies.weekly_pivot_limit."
             "confirmed_stock_weekly_pivots",
             return_value=pivots,
         ):
-            result = backtest_equity(frame, EquityPivotConfig())
+            result = backtest_weekly_pivot(frame, WeeklyPivotConfig())
         self.assertAlmostEqual(result.iloc[0].gross_return, -0.25)

@@ -109,10 +109,12 @@ def load_stock_hourly(path: Path) -> pd.DataFrame:
     )
 
 
-def confirmed_stock_weekly_pivots(frame: pd.DataFrame) -> pd.DataFrame:
-    """Build causal 2-left/2-right weekly pivots in New York market time."""
+def confirmed_stock_weekly_pivots(
+    frame: pd.DataFrame, timezone: str = "America/New_York"
+) -> pd.DataFrame:
+    """Build causal 2-left/2-right weekly pivots in the market timezone."""
     work = frame.copy()
-    local = work["timestamp"].dt.tz_convert("America/New_York")
+    local = work["timestamp"].dt.tz_convert(timezone)
     work["week_start"] = (
         local.dt.normalize() - pd.to_timedelta(local.dt.dayofweek, unit="D")
     )

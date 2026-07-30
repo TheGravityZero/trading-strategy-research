@@ -1,4 +1,4 @@
-"""Confirmed weekly-pivot limit strategy for US equities."""
+"""Market-neutral confirmed weekly-pivot limit strategy."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ from ..utils.stocks import (
 
 
 @dataclass(frozen=True)
-class EquityPivotConfig:
+class WeeklyPivotConfig:
     entry_offset_percent: float = 5.0
     take_profit_percent: float | None = None
     long_only: bool = False
@@ -26,6 +26,7 @@ class EquityPivotConfig:
     maximum_holding_days: int = 90
     fee_bps_per_side: float = 1.0
     slippage_bps_per_side: float = 3.0
+    market_timezone: str = "America/New_York"
 
     @property
     def round_trip_cost(self) -> float:
@@ -38,7 +39,7 @@ def _close_trade(
     entry: float,
     take_profit: float,
     side: str,
-    config: EquityPivotConfig,
+    config: WeeklyPivotConfig,
 ) -> dict:
     deadline = frame.iloc[fill].timestamp + pd.Timedelta(
         days=config.maximum_holding_days
@@ -94,11 +95,13 @@ def _close_trade(
     }
 
 
-def backtest_equity(
-    frame: pd.DataFrame, config: EquityPivotConfig
+def backtest_weekly_pivot(
+    frame: pd.DataFrame, config: WeeklyPivotConfig
 ) -> pd.DataFrame:
     frame = frame.sort_values("timestamp").reset_index(drop=True)
-    pivots = confirmed_stock_weekly_pivots(frame)
+    pivots = confirmed_stock_weekly_pivots(
+        frame, timezone=config.market_timezone
+    )
     if config.long_only and len(pivots):
         pivots = pivots[pivots.kind == "low"]
     records: list[dict] = []
@@ -163,13 +166,13 @@ def backtest_equity(
     return pd.DataFrame(records)
 
 
-def run_equity_study(
+def run_weekly_pivot_study(
     data_dir: Path,
     output_dir: Path,
     symbols: list[str],
-    config: EquityPivotConfig | None = None,
+    config: WeeklyPivotConfig | None = None,
 ) -> dict:
-    config = config or EquityPivotConfig()
+    config = config or WeeklyPivotConfig()
     output_dir.mkdir(parents=True, exist_ok=True)
     all_trades = []
     failures = {}
@@ -177,7 +180,7 @@ def run_equity_study(
         try:
             path = download_stock_hourly(symbol, data_dir)
             frame = load_stock_hourly(path)
-            trades = backtest_equity(frame, config)
+            trades = backtest_weekly_pivot(frame, config)
             all_trades.append(trades)
             fills = int(trades.order_filled.sum()) if len(trades) else 0
             print(f"{symbol}: {len(frame)} bars, {fills} fills", flush=True)
@@ -211,7 +214,7 @@ def run_equity_study(
     summary.to_csv(output_dir / "summary_by_symbol.csv", index=False)
     metadata = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "strategy": "UsEquityConfirmedWeeklyPivot",
+        "strategy": "ConfirmedWeeklyPivotLimit",
         "source": "Yahoo Finance chart API",
         "interval": "1h",
         "range": "1y",
@@ -221,6 +224,72 @@ def run_equity_study(
         "fills": len(filled),
         "completed": len(completed),
         "failures": failures,
+    }
+    (output_dir / "metadata.json").write_text(
+        json.dumps(metadata, indent=2), encoding="utf-8"
+    )
+    return metadata
+
+
+def run_frames_study(
+    frames: dict[str, pd.DataFrame],
+    output_dir: Path,
+    config: WeeklyPivotConfig,
+    *,
+    source: str,
+    interval: str,
+    range_: str,
+    failures: dict[str, str] | None = None,
+) -> dict:
+    """Backtest the same strategy on already loaded crypto or equity frames."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    all_trades = []
+    for symbol, frame in frames.items():
+        trades = backtest_weekly_pivot(frame, config)
+        all_trades.append(trades)
+        fills = int(trades.order_filled.sum()) if len(trades) else 0
+        print(f"{symbol}: {len(frame)} bars, {fills} fills", flush=True)
+    trades = (
+        pd.concat(all_trades, ignore_index=True)
+        if all_trades
+        else pd.DataFrame()
+    )
+    filled = (
+        trades[trades.order_filled.fillna(False)].copy()
+        if len(trades)
+        else trades
+    )
+    completed = (
+        filled[filled.exit_reason != "open"]
+        if len(filled) and "exit_reason" in filled
+        else pd.DataFrame()
+    )
+    summary = (
+        completed.groupby("symbol")
+        .agg(
+            trades=("net_return", "size"),
+            mean_net_return=("net_return", "mean"),
+            median_net_return=("net_return", "median"),
+            win_rate=("net_return", lambda x: (x > 0).mean()),
+        )
+        .reset_index()
+        if len(completed)
+        else pd.DataFrame()
+    )
+    trades.to_csv(output_dir / "trades.csv", index=False)
+    summary.to_csv(output_dir / "summary_by_symbol.csv", index=False)
+    metadata = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "strategy": "ConfirmedWeeklyPivotLimit",
+        "source": source,
+        "interval": interval,
+        "range": range_,
+        "symbols": list(frames),
+        "config": asdict(config),
+        "setups": len(trades),
+        "fills": len(filled),
+        "completed": len(completed),
+        "failures": failures or {},
     }
     (output_dir / "metadata.json").write_text(
         json.dumps(metadata, indent=2), encoding="utf-8"

@@ -5,8 +5,6 @@
 
 ```text
 strategies/
-├── run_cascade_reversal.py
-├── run_four_week_reversal.py
 ├── run_weekly_pivot_limit.py
 ├── build_results.py
 └── reports/

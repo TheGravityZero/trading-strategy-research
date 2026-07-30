@@ -1,11 +1,13 @@
 # Weekly pivot limit — crypto
 
-Период: 2025-07-01 — 2026-07-01. Активы: BTCUSDT, ETHUSDT, SOLUSDT. HYPEUSDT исключён из-за отсутствия локального архива. SL 25%, срок лимитного ордера 4 часа, TP на pivot, без breakeven.
+Данные: Binance Public Data, 15m, 2025-07-01 — 2026-07-01. Общая логика для всех рынков: long-only, entry 5% ниже подтверждённого weekly pivot, SL 25%, лимитный ордер 4 часа, удержание до 60 дней.
 
-| Конфигурация | Split | Сделки | Кластеры | Mean net | Median net | Win rate | TP rate | Stop rate |
-|---|---|---:|---:|---:|---:|---:|---:|---:|
-| Entry 5%, hold 7d | validation | 1 | 1 | -9.37% | -9.37% | 0.00% | 0.00% | 0.00% |
-| Entry 5%, hold 90d | validation | 1 | 1 | 2.24% | 2.24% | 100.00% | 0.00% | 0.00% |
-| Entry 7%, hold 90d | — | 0 | 0 | — | — | — | — | — |
+| Конфигурация | Setups | Fills | Completed | Mean net | Median net | Win rate | TP | Stop | Time exit | Open |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| TP 10% | 20 | 4 | 4 | 4.63% | 9.86% | 75.00% | 3 | 0 | 1 | 0 |
+| TP 15% | 20 | 4 | 4 | -2.19% | -6.28% | 25.00% | 1 | 0 | 3 | 0 |
+| TP 20% | 20 | 4 | 4 | -0.94% | -6.28% | 25.00% | 1 | 0 | 3 | 0 |
 
-Вывод: при offset 5% получена только одна сделка, при 7% — ни одной. Текущая связка «cascade event + confirmed weekly pivot + limit» слишком селективна для надёжного вывода.
+Недоступные активы: `HYPEUSDT` (No kline archives for HYPEUSDT).
+
+Важно: выборка сделок мала; это exploratory backtest, а не статистическое подтверждение edge.
