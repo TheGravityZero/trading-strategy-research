@@ -11,11 +11,44 @@ from urllib.request import Request, urlopen
 import pandas as pd
 
 
+STOCK_UNIVERSES = {
+    "it": [
+        "MSFT", "AAPL", "GOOGL", "META", "AMZN",
+        "ORCL", "CRM", "NOW", "ADBE", "PLTR",
+    ],
+    "semiconductors": [
+        "NVDA", "AMD", "AVGO", "QCOM", "INTC", "MU", "AMAT",
+        "LRCX", "KLAC", "TSM", "SNDK", "NBIS", "CRWV",
+    ],
+    "oil": [
+        "XOM", "CVX", "COP", "OXY", "EOG",
+        "SLB", "HAL", "MPC", "VLO", "FANG",
+    ],
+    "metals": [
+        "NEM", "GOLD", "AEM", "FCX", "SCCO",
+        "AA", "CLF", "NUE", "STLD", "MP",
+    ],
+}
+
 DEFAULT_STOCK_SYMBOLS = [
-    "MSFT", "AAPL", "GOOGL", "META", "AMZN", "ORCL", "CRM", "NOW", "ADBE",
-    "PLTR", "NVDA", "AMD", "AVGO", "QCOM", "INTC", "MU", "AMAT", "LRCX",
-    "KLAC", "TSM", "SNDK", "NBIS", "CRWV",
+    symbol
+    for sector in ("it", "semiconductors", "oil", "metals")
+    for symbol in STOCK_UNIVERSES[sector]
 ]
+
+
+def stock_symbols(
+    sector: str, symbols: list[str] | None = None
+) -> list[str]:
+    """Resolve an explicit symbol override or one named sector universe."""
+    if symbols:
+        return [symbol.upper() for symbol in symbols]
+    if sector == "all":
+        return DEFAULT_STOCK_SYMBOLS.copy()
+    try:
+        return STOCK_UNIVERSES[sector].copy()
+    except KeyError as exc:
+        raise ValueError(f"Unknown stock sector: {sector}") from exc
 
 
 def download_stock_hourly(

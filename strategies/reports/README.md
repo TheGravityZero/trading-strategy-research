@@ -4,6 +4,10 @@
 — отчёт отдельной конфигурации. CSV/JSON-артефакты создаются launcher-файлами
 рядом с README и не коммитятся.
 
+Текущая crypto-вселенная для новых запусков: `HYPEUSDT`, `BTCUSDT`,
+`SOLUSDT`, `ETHUSDT`. Сохранённые ниже старые результаты с другими активами
+помечены как historical и не считаются результатом новой вселенной.
+
 ## Crypto cascade reversal
 
 | Configuration | Command | Result |
@@ -30,10 +34,16 @@
 
 ## US stocks weekly pivot
 
-| Configuration | Command | Result |
-|---|---|---|
-| `symmetric-pivot-hold90d` | `python -m cascades.cli us-equities --maximum-holding-days 90 --output-dir strategies/reports/stock-weekly-pivot/symmetric-pivot-hold90d` | 21 сделка, mean net −3.27% |
-| `take-profit-grid` | Последовательные запуски `us-equities --take-profit-percent 7.5…30` | Лучший общий target в сетке — 20% |
-| `long-tp15-hold60d` | `python strategies/run_stock_weekly_pivot_long.py` | 6 закрытых сделок, mean net +7.98% |
+Новые запуски разделены по секторам:
+
+| Sector | Command | Symbols |
+|---|---|---:|
+| IT | `python strategies/run_stock_weekly_pivot_long.py --sector it` | 10 |
+| Semiconductors | `python strategies/run_stock_weekly_pivot_long.py --sector semiconductors` | 13 |
+| Oil | `python strategies/run_stock_weekly_pivot_long.py --sector oil` | 10 |
+| Metals | `python strategies/run_stock_weekly_pivot_long.py --sector metals` | 10 |
+
+Старый объединённый IT + semiconductor эксперимент находится в
+`stock-weekly-pivot/historical-it-semiconductors/`.
 
 Во всех командах предполагается префикс `PYTHONPATH=src`.

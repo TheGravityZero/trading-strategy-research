@@ -10,6 +10,7 @@ from cascades.strategies.confirmed_weekly_pivot import (
     WeeklyPivotLimitConfig,
     run_weekly_pivot_strategy,
 )
+from cascades.utils.crypto import DEFAULT_CRYPTO_SYMBOLS
 
 
 def main() -> None:
@@ -20,6 +21,9 @@ def main() -> None:
         default=Path("data/processed/crypto-cascade-events.csv"),
     )
     parser.add_argument("--raw-dir", type=Path, default=Path("data/raw"))
+    parser.add_argument(
+        "--symbols", nargs="+", default=DEFAULT_CRYPTO_SYMBOLS
+    )
     parser.add_argument(
         "--output-dir",
         type=Path,
@@ -47,6 +51,7 @@ def main() -> None:
         args.output_dir,
         include_test=args.include_test,
         config=config,
+        symbols=[symbol.upper() for symbol in args.symbols],
     )
 
 

@@ -87,7 +87,10 @@ pivot, TP +15%, SL −25%, удержание 60 дней. При отсутст
 часовые данные загружаются и кешируются.
 
 ```bash
-PYTHONPATH=src python strategies/run_stock_weekly_pivot_long.py
+PYTHONPATH=src python strategies/run_stock_weekly_pivot_long.py --sector it
+PYTHONPATH=src python strategies/run_stock_weekly_pivot_long.py --sector semiconductors
+PYTHONPATH=src python strategies/run_stock_weekly_pivot_long.py --sector oil
+PYTHONPATH=src python strategies/run_stock_weekly_pivot_long.py --sector metals
 ```
 
 Все launcher-файлы поддерживают `--help` и параметры директорий/стратегии.
@@ -98,12 +101,12 @@ PYTHONPATH=src python strategies/run_stock_weekly_pivot_long.py
 
 ```bash
 PYTHONPATH=src python -m cascades.cli download \
-  --symbols BTCUSDT ETHUSDT SOLUSDT \
+  --symbols HYPEUSDT BTCUSDT SOLUSDT ETHUSDT \
   --start 2025-05-01 --end 2025-05-31
 
 PYTHONPATH=src python -m cascades.cli download \
   --dataset metrics \
-  --symbols BTCUSDT ETHUSDT SOLUSDT \
+  --symbols HYPEUSDT BTCUSDT SOLUSDT ETHUSDT \
   --start 2025-05-01 --end 2025-05-31
 ```
 

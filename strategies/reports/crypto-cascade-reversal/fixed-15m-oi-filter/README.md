@@ -1,5 +1,8 @@
 # Twelve-month open-data event study
 
+> Historical result: этот отчёт построен на старой вселенной из десяти
+> контрактов. После перехода на HYPE, BTC, SOL и ETH требуется новый прогон.
+
 ## Dataset
 
 - Period: 2025-07-01 through 2026-06-30 UTC.

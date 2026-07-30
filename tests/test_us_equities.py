@@ -4,9 +4,18 @@ from unittest.mock import patch
 import pandas as pd
 
 from cascades.us_equities import EquityPivotConfig, backtest_equity
+from cascades.utils.stocks import STOCK_UNIVERSES, stock_symbols
 
 
 class EquityBacktestTest(unittest.TestCase):
+    def test_sector_universes_are_separate(self):
+        sectors = [set(symbols) for symbols in STOCK_UNIVERSES.values()]
+        for index, left in enumerate(sectors):
+            for right in sectors[index + 1 :]:
+                self.assertFalse(left & right)
+        self.assertEqual(stock_symbols("oil")[:3], ["XOM", "CVX", "COP"])
+        self.assertEqual(stock_symbols("it", ["msft"]), ["MSFT"])
+
     def test_fills_breakdown_and_takes_profit(self):
         timestamps = pd.date_range("2025-01-06 15:30", periods=12, freq="7D", tz="UTC")
         frame = pd.DataFrame(

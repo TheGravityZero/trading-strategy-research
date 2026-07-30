@@ -218,10 +218,13 @@ def run_weekly_pivot_strategy(
     output_dir: Path,
     include_test: bool = False,
     config: WeeklyPivotLimitConfig | None = None,
+    symbols: list[str] | None = None,
 ) -> dict:
     config = config or WeeklyPivotLimitConfig()
     output_dir.mkdir(parents=True, exist_ok=True)
     events = pd.read_csv(events_path, parse_dates=["timestamp"])
+    if symbols is not None:
+        events = events[events["symbol"].isin(symbols)]
     allowed = ["research", "validation"] + (["test"] if include_test else [])
     events = events[events.split.isin(allowed)]
     start, end = pd.Timestamp("2025-07-01", tz="UTC"), pd.Timestamp("2026-07-01", tz="UTC")

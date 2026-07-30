@@ -7,12 +7,7 @@ import argparse
 from pathlib import Path
 
 from cascades.study import run_large_study
-
-
-DEFAULT_SYMBOLS = [
-    "BTCUSDT", "ETHUSDT", "SOLUSDT", "XRPUSDT", "BNBUSDT",
-    "DOGEUSDT", "ADAUSDT", "LINKUSDT", "AVAXUSDT", "LTCUSDT",
-]
+from cascades.utils.crypto import DEFAULT_CRYPTO_SYMBOLS
 
 
 def main() -> None:
@@ -25,7 +20,9 @@ def main() -> None:
             "strategies/reports/crypto-cascade-reversal/fixed-15m-oi-filter"
         ),
     )
-    parser.add_argument("--symbols", nargs="+", default=DEFAULT_SYMBOLS)
+    parser.add_argument(
+        "--symbols", nargs="+", default=DEFAULT_CRYPTO_SYMBOLS
+    )
     parser.add_argument("--oi-drop-threshold", type=float, default=-0.002)
     args = parser.parse_args()
     run_large_study(

@@ -268,9 +268,12 @@ def run_four_week_strategy(
     *,
     include_test: bool = False,
     config: FourWeekReversalConfig = FourWeekReversalConfig(),
+    symbols: list[str] | None = None,
 ) -> dict:
     output_dir.mkdir(parents=True, exist_ok=True)
     events = pd.read_csv(events_path, parse_dates=["timestamp"])
+    if symbols is not None:
+        events = events[events["symbol"].isin(symbols)]
     allowed = ["research", "validation"] + (["test"] if include_test else [])
     events = events[events["split"].isin(allowed)]
     start = pd.Timestamp("2025-07-01", tz="UTC")

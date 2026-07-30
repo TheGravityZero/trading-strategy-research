@@ -34,9 +34,13 @@ PYTHONPATH=src python strategies/run_stock_weekly_pivot_long.py
 и выбран после просмотра той же годовой выборки. Два сигнала AMZN являются
 одновременными траншами.
 
-Конфигурации:
+Секторные вселенные:
 
-- [`symmetric-pivot-hold90d/`](symmetric-pivot-hold90d/) — long и short,
-  take-profit на pivot, hold 90d.
-- [`take-profit-grid/`](take-profit-grid/) — сетка тейков 7.5–30%.
-- [`long-tp15-hold60d/`](long-tp15-hold60d/) — выбранный long-only вариант.
+- [`it/`](it/)
+- [`semiconductors/`](semiconductors/)
+- [`oil/`](oil/)
+- [`metals/`](metals/)
+
+Старые смешанные результаты IT + semiconductors сохранены отдельно в
+[`historical-it-semiconductors/`](historical-it-semiconductors/) и не являются
+результатами новых секторных прогонов.

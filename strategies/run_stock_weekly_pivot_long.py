@@ -10,21 +10,29 @@ from cascades.strategies.us_equity_weekly_pivot import (
     EquityPivotConfig,
     run_equity_study,
 )
-from cascades.utils.stocks import DEFAULT_STOCK_SYMBOLS
+from cascades.utils.stocks import STOCK_UNIVERSES, stock_symbols
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--symbols", nargs="+", default=DEFAULT_STOCK_SYMBOLS)
+    parser.add_argument(
+        "--sector",
+        choices=[*STOCK_UNIVERSES, "all"],
+        default="it",
+    )
+    parser.add_argument(
+        "--symbols",
+        nargs="+",
+        default=None,
+        help="Explicit override for --sector",
+    )
     parser.add_argument(
         "--data-dir", type=Path, default=Path("data/us-equities/hourly-1y")
     )
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path(
-            "strategies/reports/stock-weekly-pivot/long-tp15-hold60d"
-        ),
+        default=None,
     )
     parser.add_argument("--entry-offset-percent", type=float, default=5.0)
     parser.add_argument("--take-profit-percent", type=float, default=15.0)
@@ -32,6 +40,10 @@ def main() -> None:
     parser.add_argument("--order-lifetime-hours", type=int, default=4)
     parser.add_argument("--maximum-holding-days", type=int, default=60)
     args = parser.parse_args()
+    symbols = stock_symbols(args.sector, args.symbols)
+    output_dir = args.output_dir or Path(
+        "strategies/reports/stock-weekly-pivot"
+    ) / args.sector / "long-tp15-hold60d"
     config = EquityPivotConfig(
         entry_offset_percent=args.entry_offset_percent,
         take_profit_percent=args.take_profit_percent,
@@ -42,8 +54,8 @@ def main() -> None:
     )
     run_equity_study(
         args.data_dir,
-        args.output_dir,
-        [symbol.upper() for symbol in args.symbols],
+        output_dir,
+        symbols,
         config,
     )
 

@@ -10,6 +10,7 @@ from cascades.strategies.four_week_reversal import (
     FourWeekReversalConfig,
     run_four_week_strategy,
 )
+from cascades.utils.crypto import DEFAULT_CRYPTO_SYMBOLS
 
 
 def main() -> None:
@@ -20,6 +21,9 @@ def main() -> None:
         default=Path("data/processed/crypto-cascade-events.csv"),
     )
     parser.add_argument("--raw-dir", type=Path, default=Path("data/raw"))
+    parser.add_argument(
+        "--symbols", nargs="+", default=DEFAULT_CRYPTO_SYMBOLS
+    )
     parser.add_argument(
         "--output-dir",
         type=Path,
@@ -48,6 +52,7 @@ def main() -> None:
             entry_window_minutes=args.entry_window_minutes,
             reclaim_minutes=args.reclaim_minutes,
         ),
+        symbols=[symbol.upper() for symbol in args.symbols],
     )
 
 

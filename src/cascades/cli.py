@@ -32,7 +32,8 @@ from .strategies.us_equity_weekly_pivot import (
     EquityPivotConfig,
     run_equity_study,
 )
-from .utils.stocks import DEFAULT_STOCK_SYMBOLS
+from .utils.stocks import STOCK_UNIVERSES, stock_symbols
+from .utils.crypto import DEFAULT_CRYPTO_SYMBOLS
 
 
 def parse_day(value: str) -> date:
@@ -172,12 +173,36 @@ def research_command(args: argparse.Namespace) -> None:
         print(f"{key}: {value}")
 
 
+def equities_command(args: argparse.Namespace) -> None:
+    symbols = stock_symbols(args.sector, args.symbols)
+    output_dir = args.output_dir or (
+        Path("strategies/reports/stock-weekly-pivot")
+        / args.sector
+        / "latest"
+    )
+    run_equity_study(
+        args.data_dir,
+        output_dir,
+        symbols,
+        EquityPivotConfig(
+            entry_offset_percent=args.entry_offset_percent,
+            take_profit_percent=args.take_profit_percent,
+            long_only=args.long_only,
+            stop_loss_percent=args.stop_loss_percent,
+            order_lifetime_hours=args.order_lifetime_hours,
+            maximum_holding_days=args.maximum_holding_days,
+        ),
+    )
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="cascades")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     download = subparsers.add_parser("download", help="Download Binance Vision data")
-    download.add_argument("--symbols", nargs="+", default=["BTCUSDT"])
+    download.add_argument(
+        "--symbols", nargs="+", default=DEFAULT_CRYPTO_SYMBOLS
+    )
     download.add_argument("--interval", default="1m")
     download.add_argument("--dataset", choices=["klines", "metrics"], default="klines")
     download.add_argument(
@@ -230,7 +255,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--output-dir",
         default="strategies/reports/crypto-cascade-reversal/study-12m",
     )
-    study.add_argument("--symbols", nargs="+", required=True)
+    study.add_argument("--symbols", nargs="+", default=DEFAULT_CRYPTO_SYMBOLS)
     study.add_argument("--oi-drop-threshold", type=float, default=-0.002)
     study.set_defaults(
         func=lambda args: run_large_study(
@@ -297,6 +322,9 @@ def build_parser() -> argparse.ArgumentParser:
     four_week.add_argument("--events", type=Path, required=True)
     four_week.add_argument("--raw-dir", type=Path, default=Path("data/raw"))
     four_week.add_argument(
+        "--symbols", nargs="+", default=DEFAULT_CRYPTO_SYMBOLS
+    )
+    four_week.add_argument(
         "--output-dir",
         type=Path,
         default=Path(
@@ -310,6 +338,7 @@ def build_parser() -> argparse.ArgumentParser:
             args.events,
             args.output_dir,
             include_test=args.include_test,
+            symbols=[symbol.upper() for symbol in args.symbols],
         )
     )
 
@@ -318,6 +347,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     pivot.add_argument("--events", type=Path, required=True)
     pivot.add_argument("--raw-dir", type=Path, default=Path("data/raw"))
+    pivot.add_argument(
+        "--symbols", nargs="+", default=DEFAULT_CRYPTO_SYMBOLS
+    )
     pivot.add_argument(
         "--output-dir",
         type=Path,
@@ -348,6 +380,7 @@ def build_parser() -> argparse.ArgumentParser:
                 ),
                 maximum_holding_minutes=args.maximum_holding_days * 24 * 60,
             ),
+            symbols=[symbol.upper() for symbol in args.symbols],
         )
     )
 
@@ -355,14 +388,24 @@ def build_parser() -> argparse.ArgumentParser:
         "us-equities",
         help="Download and backtest the weekly-pivot strategy on US stocks",
     )
-    equities.add_argument("--symbols", nargs="+", default=DEFAULT_STOCK_SYMBOLS)
+    equities.add_argument(
+        "--sector",
+        choices=[*STOCK_UNIVERSES, "all"],
+        default="it",
+    )
+    equities.add_argument(
+        "--symbols",
+        nargs="+",
+        default=None,
+        help="Explicit override for --sector",
+    )
     equities.add_argument(
         "--data-dir", type=Path, default=Path("data/us-equities/hourly-1y")
     )
     equities.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("strategies/reports/stock-weekly-pivot/latest"),
+        default=None,
     )
     equities.add_argument("--entry-offset-percent", type=float, default=5.0)
     equities.add_argument(
@@ -379,21 +422,7 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Trade only breakdowns of confirmed pivot lows",
     )
-    equities.set_defaults(
-        func=lambda args: run_equity_study(
-            args.data_dir,
-            args.output_dir,
-            [symbol.upper() for symbol in args.symbols],
-            EquityPivotConfig(
-                entry_offset_percent=args.entry_offset_percent,
-                take_profit_percent=args.take_profit_percent,
-                long_only=args.long_only,
-                stop_loss_percent=args.stop_loss_percent,
-                order_lifetime_hours=args.order_lifetime_hours,
-                maximum_holding_days=args.maximum_holding_days,
-            ),
-        )
-    )
+    equities.set_defaults(func=equities_command)
     return parser
 
 

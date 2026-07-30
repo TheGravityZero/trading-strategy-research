@@ -21,4 +21,7 @@ strategies/
 Запуск производится из корня репозитория с `PYTHONPATH=src`. Все параметры
 можно посмотреть через `--help`.
 
+Текущая crypto-вселенная по умолчанию:
+`HYPEUSDT`, `BTCUSDT`, `SOLUSDT`, `ETHUSDT`.
+
 Сводная таблица конфигураций находится в [`reports/README.md`](reports/README.md).

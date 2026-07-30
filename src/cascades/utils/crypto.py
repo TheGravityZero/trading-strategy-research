@@ -9,6 +9,14 @@ import pandas as pd
 from ..data import read_kline_archive, read_metrics_archive
 
 
+DEFAULT_CRYPTO_SYMBOLS = [
+    "HYPEUSDT",
+    "BTCUSDT",
+    "SOLUSDT",
+    "ETHUSDT",
+]
+
+
 def crypto_archive_paths(
     raw_dir: Path, symbol: str, dataset: str
 ) -> list[Path]:
