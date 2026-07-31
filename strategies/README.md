@@ -6,6 +6,10 @@
 ```text
 strategies/
 ├── run_ath_short.py
+├── run_ath_retest_volume_short.py
+├── run_defended_pivot_hvn_limit.py
+├── run_defended_pivot_hvn_reclaim.py
+├── run_defended_pivot_long.py
 ├── run_weekly_pivot_limit.py
 ├── build_results.py
 └── reports/
@@ -33,3 +37,7 @@ PYTHONPATH=src python3 strategies/build_results.py
 
 - [`reports/weekly-pivot-limit/RESULTS.md`](reports/weekly-pivot-limit/RESULTS.md)
 - [`reports/ath-short/RESULTS.md`](reports/ath-short/RESULTS.md)
+- [`reports/ath-retest-volume-short/RESULTS.md`](reports/ath-retest-volume-short/RESULTS.md)
+- [`reports/defended-pivot-long/RESULTS.md`](reports/defended-pivot-long/RESULTS.md)
+- [`reports/defended-pivot-hvn-limit/RESULTS.md`](reports/defended-pivot-hvn-limit/RESULTS.md)
+- [`reports/defended-pivot-hvn-reclaim/RESULTS.md`](reports/defended-pivot-hvn-reclaim/RESULTS.md)

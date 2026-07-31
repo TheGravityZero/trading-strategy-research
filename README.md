@@ -12,6 +12,10 @@ production-система исполнения.
 |---|---|---|---|---|
 | Weekly-pivot limit | crypto, it, semiconductors, oil, metals | Зависит от сектора | `strategies/run_weekly_pivot_limit.py` | `strategies/reports/weekly-pivot-limit/` |
 | ATH short | crypto, it, semiconductors, oil, metals | Общий результат отрицательный | `strategies/run_ath_short.py` | `strategies/reports/ath-short/` |
+| ATH retest volume short | crypto, it, semiconductors, oil, metals | Failed retest + volume profile | `strategies/run_ath_retest_volume_short.py` | `strategies/reports/ath-retest-volume-short/` |
+| Defended pivot long | crypto, it, semiconductors, oil, metals | Защиты найдены, fills отсутствуют | `strategies/run_defended_pivot_long.py` | `strategies/reports/defended-pivot-long/` |
+| Defended pivot HVN limit | crypto, it, semiconductors, oil, metals | Вход в центре объёмной зоны | `strategies/run_defended_pivot_hvn_limit.py` | `strategies/reports/defended-pivot-hvn-limit/` |
+| Defended pivot HVN reclaim | crypto, it, semiconductors, oil, metals | Вход после возврата в объёмную зону | `strategies/run_defended_pivot_hvn_reclaim.py` | `strategies/reports/defended-pivot-hvn-reclaim/` |
 
 ## Структура
 
@@ -20,6 +24,10 @@ production-система исполнения.
 ├── strategies/
 │   ├── run_weekly_pivot_limit.py    # weekly pivot long
 │   ├── run_ath_short.py             # causal ATH short
+│   ├── run_ath_retest_volume_short.py # failed ATH retest + HVN
+│   ├── run_defended_pivot_long.py   # volume + prior defense
+│   ├── run_defended_pivot_hvn_limit.py # limit в центре HVN
+│   ├── run_defended_pivot_hvn_reclaim.py # sweep + reclaim HVN
 │   └── reports/                     # strategy/sector/result.md + artifacts
 ├── src/trading_strategy/
 │   ├── strategies/                  # торговая логика и симуляция сделок
@@ -70,6 +78,37 @@ SL — 15%; проверяются TP 10%, 15% и 20%.
 PYTHONPATH=src python strategies/run_ath_short.py --sector crypto
 PYTHONPATH=src python strategies/run_ath_short.py --sector semiconductors
 PYTHONPATH=src python strategies/run_ath_short.py --sector metals
+```
+
+### Defended pivot long
+
+Торгует только weekly pivot low с объёмом минимум 1.5× медианы предыдущих
+12 недель и уже подтверждённым отскоком 1.5 ATR после касания.
+
+```bash
+PYTHONPATH=src python strategies/run_defended_pivot_long.py --sector crypto
+PYTHONPATH=src python strategies/run_defended_pivot_long.py --sector it
+```
+
+### Defended pivot HVN
+
+Обе стратегии строят профиль относительного dollar volume во время первой
+защиты pivot. Вариант `limit` покупает в центре HVN; вариант `reclaim` ждёт
+sweep ниже зоны и закрытие свечи обратно выше её нижней границы.
+
+```bash
+PYTHONPATH=src python strategies/run_defended_pivot_hvn_limit.py --sector crypto
+PYTHONPATH=src python strategies/run_defended_pivot_hvn_reclaim.py --sector crypto
+```
+
+### ATH retest volume short
+
+После коррекции минимум на 15% стратегия ждёт возврат к ATH без его обновления,
+строит volume profile и входит в short на retest верхнего high-volume node.
+
+```bash
+PYTHONPATH=src python strategies/run_ath_retest_volume_short.py --sector crypto
+PYTHONPATH=src python strategies/run_ath_retest_volume_short.py --sector semiconductors
 ```
 
 ## Загрузка криптоданных

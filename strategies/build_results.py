@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build Markdown summaries for the unified weekly-pivot strategy."""
+"""Build Markdown summaries for all strategy experiments."""
 
 from __future__ import annotations
 
@@ -159,6 +159,197 @@ def short_sector_result(sector: str) -> None:
     )
 
 
+def defended_pivot_sector_result(sector: str) -> None:
+    root = REPORTS / "defended-pivot-long" / sector
+    market = (
+        "Binance Public Data, 15m, 2025-07-01 — 2026-07-01"
+        if sector == "crypto"
+        else "Yahoo Finance, regular session, 1h, последний доступный год"
+    )
+    lines = [
+        f"# Defended pivot long — {sector}",
+        "",
+        f"Данные: {market}. Pivot volume ≥1.5× медианы 12 недель; первая "
+        "защита: касание ±0.5 ATR и отскок ≥1.5 ATR за 5 дней; следующий "
+        "пробой активирует limit 5% ниже pivot, SL 25%, ордер 4 часа.",
+        "",
+        "| TP | Volume pivots | Defenses | Triggers | Fills | Completed | "
+        "Mean net | Win rate |",
+        "|---:|---:|---:|---:|---:|---:|---:|---:|",
+    ]
+    failures: dict[str, str] = {}
+    for tp in (10, 15, 20):
+        directory = root / f"tp{tp}-hold60d"
+        metadata = json.loads((directory / "metadata.json").read_text())
+        failures.update(metadata.get("failures", {}))
+        trades = read_csv(directory / "trades.csv")
+        triggers = (
+            int(trades["trigger_timestamp"].notna().sum())
+            if "trigger_timestamp" in trades
+            else 0
+        )
+        filled = (
+            trades[trades["order_filled"] == True].copy()  # noqa: E712
+            if len(trades)
+            else pd.DataFrame()
+        )
+        completed = (
+            filled[filled["exit_reason"] != "open"]
+            if "exit_reason" in filled
+            else pd.DataFrame(columns=["net_return"])
+        )
+        lines.append(
+            f"| {tp}% | {metadata['volume_qualified_pivots']} | "
+            f"{metadata['confirmed_defenses']} | {triggers} | "
+            f"{metadata['fills']} | {metadata['completed']} | "
+            f"{percent(completed['net_return'].mean())} | "
+            f"{percent((completed['net_return'] > 0).mean())} |"
+        )
+    if failures:
+        lines += [
+            "",
+            "Недоступные активы: "
+            + ", ".join(f"`{symbol}` ({error})" for symbol, error in failures.items())
+            + ".",
+        ]
+    lines += [
+        "",
+        "Вывод: фильтры находят защищённые уровни, но повторный пробой с "
+        "лимитным входом ещё на 5% ниже pivot не дал fills. TP пока не влияет "
+        "на результат; следующим экспериментом следует менять вход.",
+    ]
+    (root / "result.md").write_text(
+        "\n".join(lines) + "\n", encoding="utf-8"
+    )
+
+
+def ath_retest_sector_result(sector: str) -> None:
+    root = REPORTS / "ath-retest-volume-short" / sector
+    market = (
+        "Binance Public Data, 15m, 2025-07-01 — 2026-07-01"
+        if sector == "crypto"
+        else "Yahoo Finance, regular session, 1h, последний доступный год"
+    )
+    lines = [
+        f"# ATH retest volume short — {sector}",
+        "",
+        f"Данные: {market}. Коррекция после ATH ≥15%, failed retest в пределах "
+        "3% ниже ATH, entry на retest верхнего high-volume node, SL 15%, "
+        "удержание до 60 дней.",
+        "",
+        "| TP | Setups | Fills | Completed | Mean net | Median net | "
+        "Win rate | TP hits | Stops | Time exit |",
+        "|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+    ]
+    failures: dict[str, str] = {}
+    for tp in (10, 15, 20):
+        directory = root / f"tp{tp}-hold60d"
+        metadata = json.loads((directory / "metadata.json").read_text())
+        failures.update(metadata.get("failures", {}))
+        trades = read_csv(directory / "trades.csv")
+        filled = (
+            trades[trades["order_filled"] == True].copy()  # noqa: E712
+            if len(trades)
+            else pd.DataFrame()
+        )
+        completed = (
+            filled[filled["exit_reason"] != "open"]
+            if "exit_reason" in filled
+            else pd.DataFrame(columns=["net_return"])
+        )
+        reasons = (
+            completed["exit_reason"].value_counts()
+            if "exit_reason" in completed
+            else pd.Series(dtype=int)
+        )
+        lines.append(
+            f"| {tp}% | {metadata['setups']} | {metadata['fills']} | "
+            f"{metadata['completed']} | "
+            f"{percent(completed['net_return'].mean())} | "
+            f"{percent(completed['net_return'].median())} | "
+            f"{percent((completed['net_return'] > 0).mean())} | "
+            f"{int(reasons.get('take_profit', 0))} | "
+            f"{int(reasons.get('stop', 0))} | "
+            f"{int(reasons.get('time_exit', 0))} |"
+        )
+    if failures:
+        lines += [
+            "",
+            "Недоступные активы: "
+            + ", ".join(f"`{symbol}` ({error})" for symbol, error in failures.items())
+            + ".",
+        ]
+    lines += [
+        "",
+        "ATH и volume profile рассчитываются только по данным, доступным к "
+        "моменту failed retest. Для акций ATH ограничен годовой историей.",
+    ]
+    (root / "result.md").write_text(
+        "\n".join(lines) + "\n", encoding="utf-8"
+    )
+
+
+def defended_hvn_sector_result(sector: str, slug: str, title: str) -> None:
+    root = REPORTS / slug / sector
+    market = (
+        "Binance Public Data, 15m, 2025-07-01 — 2026-07-01"
+        if sector == "crypto"
+        else "Yahoo Finance, regular session, 1h, последний доступный год"
+    )
+    lines = [
+        f"# {title} — {sector}",
+        "",
+        f"Данные: {market}. Volume pivot ≥1.5× baseline, первая защита "
+        "≥1.5 ATR; HVN строится в зоне pivot ±1 ATR по первой защите. "
+        "SL 25%, удержание до 60 дней.",
+        "",
+        "| TP | Volume pivots | Defenses | Fills | Completed | Mean net | "
+        "Median net | Win rate | TP hits | Stops |",
+        "|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+    ]
+    failures: dict[str, str] = {}
+    for tp in (10, 15, 20):
+        directory = root / f"tp{tp}-hold60d"
+        metadata = json.loads((directory / "metadata.json").read_text())
+        failures.update(metadata.get("failures", {}))
+        trades = read_csv(directory / "trades.csv")
+        filled = (
+            trades[trades["order_filled"] == True].copy()  # noqa: E712
+            if len(trades)
+            else pd.DataFrame()
+        )
+        completed = (
+            filled[filled["exit_reason"] != "open"]
+            if "exit_reason" in filled
+            else pd.DataFrame(columns=["net_return"])
+        )
+        reasons = (
+            completed["exit_reason"].value_counts()
+            if "exit_reason" in completed
+            else pd.Series(dtype=int)
+        )
+        lines.append(
+            f"| {tp}% | {metadata['volume_qualified_pivots']} | "
+            f"{metadata['confirmed_defenses']} | {metadata['fills']} | "
+            f"{metadata['completed']} | "
+            f"{percent(completed['net_return'].mean())} | "
+            f"{percent(completed['net_return'].median())} | "
+            f"{percent((completed['net_return'] > 0).mean())} | "
+            f"{int(reasons.get('take_profit', 0))} | "
+            f"{int(reasons.get('stop', 0))} |"
+        )
+    if failures:
+        lines += [
+            "",
+            "Недоступные активы: "
+            + ", ".join(f"`{symbol}` ({error})" for symbol, error in failures.items())
+            + ".",
+        ]
+    (root / "result.md").write_text(
+        "\n".join(lines) + "\n", encoding="utf-8"
+    )
+
+
 def weekly_pivot_index() -> None:
     rows = [
         "# Results",
@@ -233,12 +424,126 @@ def ath_short_index() -> None:
     )
 
 
+def defended_pivot_index() -> None:
+    rows = [
+        "# Defended Pivot Long Results",
+        "",
+        "Volume ratio ≥1.5, defense bounce ≥1.5 ATR за 5 дней, entry 5% "
+        "ниже pivot, SL 25%, TP 10%/15%/20%.",
+        "",
+        "[Описание стратегии](README.md)",
+        "",
+        "| crypto | it | semiconductors | oil | metals |",
+        "|---|---|---|---|---|",
+        "| " + " | ".join(
+            f"[result]({sector}/result.md)"
+            for sector in SECTORS
+        ) + " |",
+    ]
+    (REPORTS / "defended-pivot-long" / "RESULTS.md").write_text(
+        "\n".join(rows) + "\n", encoding="utf-8"
+    )
+
+
+def ath_retest_index() -> None:
+    aggregate_rows = []
+    equity_sectors = ("it", "semiconductors", "oil", "metals")
+    for tp in (10, 15, 20):
+        frames = [
+            read_csv(
+                REPORTS
+                / "ath-retest-volume-short"
+                / sector
+                / f"tp{tp}-hold60d"
+                / "trades.csv"
+            )
+            for sector in equity_sectors
+        ]
+        trades = pd.concat(frames, ignore_index=True)
+        completed = trades[
+            trades["order_filled"].eq(True)  # noqa: E712
+            & trades["exit_reason"].ne("open")
+        ]
+        aggregate_rows.append(
+            f"| {tp}% | {len(completed)} | "
+            f"{percent(completed['net_return'].mean())} | "
+            f"{percent(completed['net_return'].median())} | "
+            f"{percent((completed['net_return'] > 0).mean())} | "
+            f"{int((completed['exit_reason'] == 'take_profit').sum())} | "
+            f"{int((completed['exit_reason'] == 'stop').sum())} |"
+        )
+    rows = [
+        "# ATH Retest Volume Short Results",
+        "",
+        "Коррекция ≥15%, возврат в пределах 3% ниже ATH, entry на retest "
+        "верхнего high-volume node, SL 15%, TP 10%/15%/20%.",
+        "",
+        "[Описание стратегии](README.md)",
+        "",
+        "| crypto | it | semiconductors | oil | metals |",
+        "|---|---|---|---|---|",
+        "| " + " | ".join(
+            f"[result]({sector}/result.md)"
+            for sector in SECTORS
+        ) + " |",
+        "",
+        "### Aggregate equity result",
+        "",
+        "| TP | Trades | Mean net | Median net | Win rate | TP hits | Stops |",
+        "|---:|---:|---:|---:|---:|---:|---:|",
+        *aggregate_rows,
+    ]
+    (REPORTS / "ath-retest-volume-short" / "RESULTS.md").write_text(
+        "\n".join(rows) + "\n", encoding="utf-8"
+    )
+
+
+def defended_hvn_index(slug: str, title: str, entry: str) -> None:
+    rows = [
+        f"# {title} Results",
+        "",
+        f"{entry}. Volume ratio ≥1.5, defense ≥1.5 ATR, SL 25%, "
+        "TP 10%/15%/20%.",
+        "",
+        "[Описание стратегии](README.md)",
+        "",
+        "| crypto | it | semiconductors | oil | metals |",
+        "|---|---|---|---|---|",
+        "| " + " | ".join(
+            f"[result]({sector}/result.md)" for sector in SECTORS
+        ) + " |",
+    ]
+    (REPORTS / slug / "RESULTS.md").write_text(
+        "\n".join(rows) + "\n", encoding="utf-8"
+    )
+
+
 def main() -> None:
     for sector in SECTORS:
         sector_result(sector)
         short_sector_result(sector)
+        defended_pivot_sector_result(sector)
+        ath_retest_sector_result(sector)
+        defended_hvn_sector_result(
+            sector, "defended-pivot-hvn-limit", "Defended Pivot HVN Limit"
+        )
+        defended_hvn_sector_result(
+            sector, "defended-pivot-hvn-reclaim", "Defended Pivot HVN Reclaim"
+        )
     weekly_pivot_index()
     ath_short_index()
+    defended_pivot_index()
+    ath_retest_index()
+    defended_hvn_index(
+        "defended-pivot-hvn-limit",
+        "Defended Pivot HVN Limit",
+        "Вход лимитным ордером в центре HVN",
+    )
+    defended_hvn_index(
+        "defended-pivot-hvn-reclaim",
+        "Defended Pivot HVN Reclaim",
+        "Вход после sweep ниже HVN и закрытия обратно выше нижней границы",
+    )
 
 
 if __name__ == "__main__":
