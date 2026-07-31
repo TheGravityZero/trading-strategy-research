@@ -5,6 +5,7 @@
 
 ```text
 strategies/
+├── run_ath_short.py
 ├── run_weekly_pivot_limit.py
 ├── build_results.py
 └── reports/
@@ -28,5 +29,7 @@ strategies/
 PYTHONPATH=src python3 strategies/build_results.py
 ```
 
-Сводная матрица находится в
-[`reports/weekly-pivot-limit/RESULTS.md`](reports/weekly-pivot-limit/RESULTS.md).
+Сводные матрицы:
+
+- [`reports/weekly-pivot-limit/RESULTS.md`](reports/weekly-pivot-limit/RESULTS.md)
+- [`reports/ath-short/RESULTS.md`](reports/ath-short/RESULTS.md)

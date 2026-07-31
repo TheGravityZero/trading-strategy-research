@@ -11,13 +11,15 @@ production-система исполнения.
 | Стратегия | Секторы | Текущий результат | Launcher | Отчёт |
 |---|---|---|---|---|
 | Weekly-pivot limit | crypto, it, semiconductors, oil, metals | Зависит от сектора | `strategies/run_weekly_pivot_limit.py` | `strategies/reports/weekly-pivot-limit/` |
+| ATH short | crypto, it, semiconductors, oil, metals | Общий результат отрицательный | `strategies/run_ath_short.py` | `strategies/reports/ath-short/` |
 
 ## Структура
 
 ```text
 .
 ├── strategies/
-│   ├── run_weekly_pivot_limit.py    # общий launcher всех рынков
+│   ├── run_weekly_pivot_limit.py    # weekly pivot long
+│   ├── run_ath_short.py             # causal ATH short
 │   └── reports/                     # strategy/sector/result.md + artifacts
 ├── src/trading_strategy/
 │   ├── strategies/                  # торговая логика и симуляция сделок
@@ -46,9 +48,8 @@ python -m pip install -e .
 
 ### Weekly-pivot limit
 
-Для всех рынков используется одна логика: только long, entry 5% ниже
-подтверждённого weekly pivot, TP +15%, SL −25%, заявка 4 часа и удержание
-до 60 дней. Crypto агрегируется в 15-минутные свечи, акции работают на 1h.
+Long-стратегия входит на 5% ниже подтверждённого weekly pivot low. Заявка
+живёт 4 часа, позиция удерживается до 60 дней.
 
 ```bash
 PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector crypto
@@ -59,6 +60,17 @@ PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector metals
 ```
 
 Все launcher-файлы поддерживают `--help` и параметры директорий/стратегии.
+
+### ATH short
+
+После обновления causal ATH выставляется лимитный short на 7% выше уровня.
+SL — 15%; проверяются TP 10%, 15% и 20%.
+
+```bash
+PYTHONPATH=src python strategies/run_ath_short.py --sector crypto
+PYTHONPATH=src python strategies/run_ath_short.py --sector semiconductors
+PYTHONPATH=src python strategies/run_ath_short.py --sector metals
+```
 
 ## Загрузка криптоданных
 
