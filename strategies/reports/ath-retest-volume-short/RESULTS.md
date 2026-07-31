@@ -4,6 +4,8 @@
 
 [Описание стратегии](README.md)
 
+[Сетка correction/retest/structural stop](GRID_RESULTS.md)
+
 | crypto | it | semiconductors | oil | metals |
 |---|---|---|---|---|
 | [result](crypto/result.md) | [result](it/result.md) | [result](semiconductors/result.md) | [result](oil/result.md) | [result](metals/result.md) |

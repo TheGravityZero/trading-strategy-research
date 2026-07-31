@@ -7,6 +7,7 @@
 strategies/
 ├── run_ath_short.py
 ├── run_ath_retest_volume_short.py
+├── run_ath_retest_volume_grid.py
 ├── run_defended_pivot_hvn_limit.py
 ├── run_defended_pivot_hvn_reclaim.py
 ├── run_defended_pivot_long.py

@@ -21,6 +21,7 @@ class AthRetestVolumeConfig:
     upper_profile_fraction: float = 0.5
     entry_lifetime_days: int = 5
     take_profit_percent: float = 10.0
+    stop_mode: str = "percent"
     stop_loss_percent: float = 15.0
     maximum_holding_days: int = 60
     fee_bps_per_side: float = 1.0
@@ -57,11 +58,16 @@ def _close_short(
     fill: int,
     entry: float,
     config: AthRetestVolumeConfig,
+    stop_price: float | None = None,
 ) -> dict:
     deadline = frame.iloc[fill].timestamp + pd.Timedelta(
         days=config.maximum_holding_days
     )
-    stop = entry * (1 + config.stop_loss_percent / 100)
+    stop = (
+        stop_price
+        if stop_price is not None
+        else entry * (1 + config.stop_loss_percent / 100)
+    )
     take_profit = entry * (1 - config.take_profit_percent / 100)
     candidates = frame.iloc[fill:]
     candidates = candidates[candidates.timestamp <= deadline]
@@ -136,6 +142,8 @@ def backtest_ath_retest_volume(
         node, node_share = _upper_high_volume_node(
             profile_window, correction_low, ath, config
         )
+        node_half_width = (ath - correction_low) / config.profile_bins / 2
+        node_upper = node + node_half_width
         below = frame.iloc[position:]
         breaks = below[below.close < node]
         record = {
@@ -148,6 +156,7 @@ def backtest_ath_retest_volume(
             "ath_retest_timestamp": candle.timestamp,
             "ath_retest_high": candle.high,
             "volume_node": node,
+            "volume_node_upper": node_upper,
             "volume_node_share": node_share,
             "order_filled": False,
         }
@@ -173,10 +182,21 @@ def backtest_ath_retest_volume(
         record["take_profit_price"] = node * (
             1 - config.take_profit_percent / 100
         )
+        if config.stop_mode == "ath":
+            stop_price = ath
+        elif config.stop_mode == "hvn":
+            stop_price = node_upper
+        elif config.stop_mode == "percent":
+            stop_price = node * (1 + config.stop_loss_percent / 100)
+        else:
+            raise ValueError(f"Unknown stop mode: {config.stop_mode}")
+        record["stop_price"] = stop_price
         record["order_filled"] = fill is not None
         if fill is not None:
             record["entry_timestamp"] = frame.iloc[fill].timestamp
-            record.update(_close_short(frame, fill, node, config))
+            record.update(
+                _close_short(frame, fill, node, config, stop_price=stop_price)
+            )
             unavailable_until = record["exit_timestamp"]
             position = fill + 1
         else:

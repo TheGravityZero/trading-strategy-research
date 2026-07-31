@@ -6,8 +6,8 @@
 ## Сценарий
 
 1. Фиксируется causal ATH.
-2. Цена корректируется минимум на `15%` от ATH.
-3. Затем high возвращается в пределах `3%` ниже ATH, но не обновляет максимум.
+2. Цена корректируется минимум на настраиваемую величину от ATH.
+3. Затем high возвращается в заданную зону ниже ATH, но не обновляет максимум.
 4. На данных от ATH до failed retest строится volume profile из 30 корзин.
 5. В верхней половине диапазона выбирается high-volume node с максимальным
    dollar volume.
@@ -19,7 +19,8 @@
 
 ## Риск и выход
 
-- Stop-loss: `15%` выше entry.
+- Stop-loss: фиксированный процент выше entry, causal ATH или верхняя граница
+  HVN-корзины.
 - Take-profit: `10%`, `15%` или `20%` ниже entry.
 - Максимальное удержание: `60 дней`.
 - На свече исполнения take-profit запрещён, stop разрешён консервативно.
@@ -39,12 +40,22 @@ PYTHONPATH=src python3 strategies/run_ath_retest_volume_short.py \
   --profile-bins 30 \
   --entry-lifetime-days 5 \
   --take-profit-percent 10 \
-  --stop-loss-percent 15
+  --stop-mode ath
+```
+
+Полная сетка `correction 7/10/12% × retest 3/5/7% × stop ATH/HVN × TP
+10/15/20%` запускается отдельно:
+
+```bash
+PYTHONPATH=src python3 strategies/run_ath_retest_volume_grid.py \
+  --sector semiconductors
 ```
 
 ## Результаты
 
 [Общая таблица результатов](RESULTS.md)
+
+[Результаты новой сетки параметров](GRID_RESULTS.md)
 
 - [crypto](crypto/result.md)
 - [IT](it/result.md)

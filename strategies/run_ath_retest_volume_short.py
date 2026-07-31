@@ -31,6 +31,7 @@ def config_from_args(args: argparse.Namespace) -> AthRetestVolumeConfig:
         upper_profile_fraction=args.upper_profile_fraction,
         entry_lifetime_days=args.entry_lifetime_days,
         take_profit_percent=args.take_profit_percent,
+        stop_mode=args.stop_mode,
         stop_loss_percent=args.stop_loss_percent,
         maximum_holding_days=args.maximum_holding_days,
         fee_bps_per_side=5.0 if args.sector == "crypto" else 1.0,
@@ -93,6 +94,9 @@ def main() -> None:
     parser.add_argument("--upper-profile-fraction", type=float, default=0.5)
     parser.add_argument("--entry-lifetime-days", type=int, default=5)
     parser.add_argument("--take-profit-percent", type=float, default=10.0)
+    parser.add_argument(
+        "--stop-mode", choices=["percent", "ath", "hvn"], default="percent"
+    )
     parser.add_argument("--stop-loss-percent", type=float, default=15.0)
     parser.add_argument("--maximum-holding-days", type=int, default=60)
     parser.add_argument("--output-dir", type=Path, default=None)

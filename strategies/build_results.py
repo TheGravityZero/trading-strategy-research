@@ -480,6 +480,8 @@ def ath_retest_index() -> None:
         "",
         "[Описание стратегии](README.md)",
         "",
+        "[Сетка correction/retest/structural stop](GRID_RESULTS.md)",
+        "",
         "| crypto | it | semiconductors | oil | metals |",
         "|---|---|---|---|---|",
         "| " + " | ".join(
@@ -518,6 +520,123 @@ def defended_hvn_index(slug: str, title: str, entry: str) -> None:
     )
 
 
+def ath_retest_grid_result() -> None:
+    root = REPORTS / "ath-retest-volume-short" / "grid"
+    rows = []
+    sector_rows = []
+    for correction in (7, 10, 12):
+        for retest in (3, 5, 7):
+            for stop_mode in ("ath", "hvn"):
+                for tp in (10, 15, 20):
+                    name = (
+                        f"corr{correction:02d}-retest{retest:02d}-"
+                        f"stop-{stop_mode}-tp{tp:02d}"
+                    )
+                    frames = [
+                        read_csv(root / sector / name / "trades.csv")
+                        for sector in SECTORS
+                    ]
+                    trades = pd.concat(frames, ignore_index=True)
+                    completed = trades[
+                        trades["order_filled"].eq(True)  # noqa: E712
+                        & trades["exit_reason"].ne("open")
+                    ]
+                    reasons = completed["exit_reason"].value_counts()
+                    rows.append(
+                        {
+                            "correction": correction,
+                            "retest": retest,
+                            "stop": stop_mode.upper(),
+                            "tp": tp,
+                            "trades": len(completed),
+                            "mean": completed["net_return"].mean(),
+                            "median": completed["net_return"].median(),
+                            "win_rate": (completed["net_return"] > 0).mean(),
+                            "tp_hits": int(reasons.get("take_profit", 0)),
+                            "stops": int(reasons.get("stop", 0)),
+                        }
+                    )
+    table = pd.DataFrame(rows)
+    eligible = table[table.trades >= 20].sort_values(
+        ["mean", "trades"], ascending=[False, False]
+    )
+    for sector in SECTORS:
+        candidates = []
+        for row in rows:
+            name = (
+                f"corr{row['correction']:02d}-retest{row['retest']:02d}-"
+                f"stop-{row['stop'].lower()}-tp{row['tp']:02d}"
+            )
+            trades = read_csv(root / sector / name / "trades.csv")
+            completed = trades[
+                trades["order_filled"].eq(True)  # noqa: E712
+                & trades["exit_reason"].ne("open")
+            ]
+            if len(completed):
+                candidates.append((completed.net_return.mean(), len(completed), row))
+        best_mean, count, best = max(
+            candidates,
+            key=lambda candidate: (candidate[0], candidate[1]),
+            default=(float("nan"), 0, {}),
+        )
+        sector_rows.append(
+            f"| {sector} | "
+            + (
+                f"{best['correction']}% | {best['retest']}% | {best['stop']} | "
+                f"{best['tp']}% | {count} | {percent(best_mean)} |"
+                if best
+                else "— | — | — | — | 0 | — |"
+            )
+        )
+    lines = [
+        "# ATH Retest Volume Short — parameter grid",
+        "",
+        "Сетка: correction 7/10/12%, retest distance 3/5/7%, stop на ATH "
+        "или верхней границе HVN, TP 10/15/20%. Crypto — 15m, акции — 1h.",
+        "",
+        "Вывод: устойчивого положительного результата нет. Формально лучший "
+        "вариант при ≥20 сделках (7% / 7% / HVN / TP20) дал только +0.01% "
+        "mean при медиане −0.23% и 274 stop из 278 сделок. Узкий HVN-stop "
+        "почти всегда срабатывает; варианты со stop на ATH также отрицательны "
+        "на общей выборке.",
+        "",
+        "## Лучшие варианты при минимум 20 завершённых сделках",
+        "",
+        "| Correction | Retest | Stop | TP | Trades | Mean net | Median net | Win rate | TP hits | Stops |",
+        "|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|",
+    ]
+    for row in eligible.head(10).to_dict("records"):
+        lines.append(
+            f"| {row['correction']}% | {row['retest']}% | {row['stop']} | "
+            f"{row['tp']}% | {row['trades']} | {percent(row['mean'])} | "
+            f"{percent(row['median'])} | {percent(row['win_rate'])} | "
+            f"{row['tp_hits']} | {row['stops']} |"
+        )
+    lines += [
+        "",
+        "## Лучший mean по сектору (без поправки на малую выборку)",
+        "",
+        "| Sector | Correction | Retest | Stop | TP | Trades | Mean net |",
+        "|---|---:|---:|---|---:|---:|---:|",
+        *sector_rows,
+        "",
+        "## Полная сетка",
+        "",
+        "| Correction | Retest | Stop | TP | Trades | Mean net | Median net | Win rate | TP hits | Stops |",
+        "|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|",
+    ]
+    for row in rows:
+        lines.append(
+            f"| {row['correction']}% | {row['retest']}% | {row['stop']} | "
+            f"{row['tp']}% | {row['trades']} | {percent(row['mean'])} | "
+            f"{percent(row['median'])} | {percent(row['win_rate'])} | "
+            f"{row['tp_hits']} | {row['stops']} |"
+        )
+    (REPORTS / "ath-retest-volume-short" / "GRID_RESULTS.md").write_text(
+        "\n".join(lines) + "\n", encoding="utf-8"
+    )
+
+
 def main() -> None:
     for sector in SECTORS:
         sector_result(sector)
@@ -534,6 +653,7 @@ def main() -> None:
     ath_short_index()
     defended_pivot_index()
     ath_retest_index()
+    ath_retest_grid_result()
     defended_hvn_index(
         "defended-pivot-hvn-limit",
         "Defended Pivot HVN Limit",
