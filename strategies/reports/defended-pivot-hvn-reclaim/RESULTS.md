@@ -1,8 +1,8 @@
 # Defended Pivot HVN Reclaim Results
 
-Вход после sweep ниже HVN и закрытия обратно выше нижней границы. Volume ratio ≥1.5, defense ≥1.5 ATR, SL 25%, TP 10%/15%/20%.
+Entry after a sweep below the HVN and a close back above its lower boundary. Volume ratio ≥1.5, defense ≥1.5 ATR, SL 25%, TP 10%/15%/20%.
 
-[Описание стратегии](README.md)
+[Strategy description](README.md)
 
 | crypto | it | semiconductors | oil | metals |
 |---|---|---|---|---|

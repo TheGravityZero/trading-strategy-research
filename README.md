@@ -1,47 +1,47 @@
 # Trading Strategy Research
 
-Исследовательский репозиторий для воспроизводимых бэктестов единой
-weekly-pivot стратегии на криптовалютах и американских акциях.
+A research repository for reproducible backtests of trading strategies across
+cryptocurrency and U.S. equity markets.
 
-Это исследовательский код, а не инвестиционная рекомендация и не готовая
-production-система исполнения.
+This is research code, not investment advice or a production-ready execution
+system.
 
-## Реализованные стратегии
+## Implemented strategies
 
-| Стратегия | Секторы | Текущий результат | Launcher | Отчёт |
+| Strategy | Sectors | Current result | Launcher | Report |
 |---|---|---|---|---|
-| Weekly-pivot limit | crypto, it, semiconductors, oil, metals | Зависит от сектора | `strategies/run_weekly_pivot_limit.py` | `strategies/reports/weekly-pivot-limit/` |
-| ATH short | crypto, it, semiconductors, oil, metals | Общий результат отрицательный | `strategies/run_ath_short.py` | `strategies/reports/ath-short/` |
-| ATH retest volume short | crypto, it, semiconductors, oil, metals | Failed retest + volume profile | `strategies/run_ath_retest_volume_short.py` | `strategies/reports/ath-retest-volume-short/` |
-| Defended pivot long | crypto, it, semiconductors, oil, metals | Защиты найдены, fills отсутствуют | `strategies/run_defended_pivot_long.py` | `strategies/reports/defended-pivot-long/` |
-| Defended pivot HVN limit | crypto, it, semiconductors, oil, metals | Вход в центре объёмной зоны | `strategies/run_defended_pivot_hvn_limit.py` | `strategies/reports/defended-pivot-hvn-limit/` |
-| Defended pivot HVN reclaim | crypto, it, semiconductors, oil, metals | Вход после возврата в объёмную зону | `strategies/run_defended_pivot_hvn_reclaim.py` | `strategies/reports/defended-pivot-hvn-reclaim/` |
+| Weekly-pivot limit | crypto, it, semiconductors, oil, metals | Sector-dependent | `strategies/run_weekly_pivot_limit.py` | `strategies/reports/weekly-pivot-limit/` |
+| ATH short | crypto, it, semiconductors, oil, metals | Negative aggregate result | `strategies/run_ath_short.py` | `strategies/reports/ath-short/` |
+| ATH retest volume short | crypto, it, semiconductors, oil, metals | Failed retest with volume profile | `strategies/run_ath_retest_volume_short.py` | `strategies/reports/ath-retest-volume-short/` |
+| Defended pivot long | crypto, it, semiconductors, oil, metals | Defenses found, no fills | `strategies/run_defended_pivot_long.py` | `strategies/reports/defended-pivot-long/` |
+| Defended pivot HVN limit | crypto, it, semiconductors, oil, metals | Entry at the center of the volume zone | `strategies/run_defended_pivot_hvn_limit.py` | `strategies/reports/defended-pivot-hvn-limit/` |
+| Defended pivot HVN reclaim | crypto, it, semiconductors, oil, metals | Entry after reclaiming the volume zone | `strategies/run_defended_pivot_hvn_reclaim.py` | `strategies/reports/defended-pivot-hvn-reclaim/` |
 
-## Структура
+## Repository structure
 
 ```text
 .
 ├── strategies/
-│   ├── run_weekly_pivot_limit.py    # weekly pivot long
-│   ├── run_ath_short.py             # causal ATH short
-│   ├── run_ath_retest_volume_short.py # failed ATH retest + HVN
-│   ├── run_defended_pivot_long.py   # volume + prior defense
-│   ├── run_defended_pivot_hvn_limit.py # limit в центре HVN
-│   ├── run_defended_pivot_hvn_reclaim.py # sweep + reclaim HVN
-│   └── reports/                     # strategy/sector/result.md + artifacts
+│   ├── run_weekly_pivot_limit.py       # weekly pivot long
+│   ├── run_ath_short.py                # causal ATH short
+│   ├── run_ath_retest_volume_short.py  # failed ATH retest + HVN
+│   ├── run_defended_pivot_long.py      # volume + prior defense
+│   ├── run_defended_pivot_hvn_limit.py # limit at the HVN center
+│   ├── run_defended_pivot_hvn_reclaim.py # sweep + HVN reclaim
+│   └── reports/                        # strategy/sector/result.md + artifacts
 ├── src/trading_strategy/
-│   ├── strategies/                  # торговая логика и симуляция сделок
+│   ├── strategies/                     # trading logic and simulation
 │   ├── utils/
-│   │   ├── crypto.py                # Binance archives и 15m+ OHLC
-│   │   └── stocks.py                # hourly stocks, NY time, weekly pivots
-│   ├── data.py                      # низкоуровневые Binance readers/downloaders
-│   └── cli.py                       # общий CLI для исследований
+│   │   ├── crypto.py                   # Binance archives and 15m+ OHLC
+│   │   └── stocks.py                   # hourly stocks, NY time, weekly pivots
+│   ├── data.py                         # low-level Binance readers/downloaders
+│   └── cli.py                          # shared research CLI
 └── tests/
 ```
 
-## Установка
+## Installation
 
-Требуется Python 3.10+.
+Python 3.10+ is required.
 
 ```bash
 python -m venv .venv
@@ -49,15 +49,15 @@ source .venv/bin/activate
 python -m pip install -e .
 ```
 
-Без editable-install команды можно запускать с `PYTHONPATH=src`, как в
-примерах ниже.
+Without an editable install, run commands with `PYTHONPATH=src`, as shown
+below.
 
-## Запуск стратегий
+## Running strategies
 
 ### Weekly-pivot limit
 
-Long-стратегия входит на 5% ниже подтверждённого weekly pivot low. Заявка
-живёт 4 часа, позиция удерживается до 60 дней.
+The long strategy enters 5% below a confirmed weekly pivot low. The order
+remains active for 4 hours and the position can be held for up to 60 days.
 
 ```bash
 PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector crypto
@@ -67,12 +67,13 @@ PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector oil
 PYTHONPATH=src python strategies/run_weekly_pivot_limit.py --sector metals
 ```
 
-Все launcher-файлы поддерживают `--help` и параметры директорий/стратегии.
+All launchers support `--help` and strategy/data-path parameters.
 
 ### ATH short
 
-После обновления causal ATH выставляется лимитный short на 7% выше уровня.
-SL — 15%; проверяются TP 10%, 15% и 20%.
+After a causal ATH update, the strategy places a limit short 7% above the
+level. The stop-loss is 15%; take-profit values of 10%, 15%, and 20% are
+tested.
 
 ```bash
 PYTHONPATH=src python strategies/run_ath_short.py --sector crypto
@@ -82,8 +83,8 @@ PYTHONPATH=src python strategies/run_ath_short.py --sector metals
 
 ### Defended pivot long
 
-Торгует только weekly pivot low с объёмом минимум 1.5× медианы предыдущих
-12 недель и уже подтверждённым отскоком 1.5 ATR после касания.
+Trades only weekly pivot lows whose volume is at least 1.5× the median of the
+previous 12 weeks and that have already produced a confirmed 1.5 ATR bounce.
 
 ```bash
 PYTHONPATH=src python strategies/run_defended_pivot_long.py --sector crypto
@@ -92,9 +93,9 @@ PYTHONPATH=src python strategies/run_defended_pivot_long.py --sector it
 
 ### Defended pivot HVN
 
-Обе стратегии строят профиль относительного dollar volume во время первой
-защиты pivot. Вариант `limit` покупает в центре HVN; вариант `reclaim` ждёт
-sweep ниже зоны и закрытие свечи обратно выше её нижней границы.
+Both variants build a relative dollar-volume profile during the pivot's first
+defense. `limit` buys at the HVN center; `reclaim` waits for a sweep below the
+zone followed by a close back above its lower boundary.
 
 ```bash
 PYTHONPATH=src python strategies/run_defended_pivot_hvn_limit.py --sector crypto
@@ -103,18 +104,19 @@ PYTHONPATH=src python strategies/run_defended_pivot_hvn_reclaim.py --sector cryp
 
 ### ATH retest volume short
 
-После коррекции минимум на 15% стратегия ждёт возврат к ATH без его обновления,
-строит volume profile и входит в short на retest верхнего high-volume node.
+After a significant correction, the strategy waits for a return toward the
+ATH without a new high, builds a volume profile, and enters short on a retest
+of the upper high-volume node.
 
 ```bash
 PYTHONPATH=src python strategies/run_ath_retest_volume_short.py --sector crypto
 PYTHONPATH=src python strategies/run_ath_retest_volume_short.py --sector semiconductors
 ```
 
-## Загрузка криптоданных
+## Downloading crypto data
 
-Пример загрузки архивов свечей. Стратегия агрегирует их до 15m и не принимает
-таймфреймы ниже 15 минут:
+The following command downloads candle archives. Strategies aggregate them to
+15m and reject timeframes below 15 minutes:
 
 ```bash
 PYTHONPATH=src python -m trading_strategy.cli download \
@@ -122,34 +124,34 @@ PYTHONPATH=src python -m trading_strategy.cli download \
   --start 2025-05-01 --end 2025-05-31
 ```
 
-Источник: [Binance Public Data](https://github.com/binance/binance-public-data).
+Source: [Binance Public Data](https://github.com/binance/binance-public-data).
 
-## Методология
+## Methodology
 
-- Недельные уровни формируются только после завершения необходимых свечей.
-- Take-profit запрещён в свече исполнения, поскольку OHLC не
-  восстанавливает порядок intrabar extremes; stop в ней остаётся возможным.
-- Открытые позиции не включаются в realised performance.
-- Комиссии и slippage задаются явно в конфигурации стратегии.
+- Weekly levels become available only after all confirmation candles close.
+- Take-profit is disabled on the fill candle because OHLC data cannot recover
+  the order of intrabar extremes; a conservative stop remains possible.
+- Open positions are excluded from realized performance.
+- Fees and slippage are explicit strategy configuration parameters.
 
-## Отчёты
+## Reports
 
-Сводные результаты разных конфигураций находятся в sector-level `result.md`
-в [`strategies/reports`](strategies/reports). CSV/JSON-артефакты генерируются
-локально и исключены из Git.
+Configuration summaries are stored in sector-level `result.md` files under
+[`strategies/reports`](strategies/reports). CSV/JSON artifacts are generated
+locally and excluded from Git.
 
-## Тесты
+## Tests
 
 ```bash
 PYTHONPATH=src python -m unittest discover -s tests -v
 ```
 
-## Основные ограничения
+## Main limitations
 
-- Yahoo chart endpoint не является гарантированным production data feed.
-- Часовые OHLC не позволяют точно восстановить очередь и intrabar path.
-- Для шортов акций не моделируются borrow availability и borrow fee.
-- Для perpetual futures не учтён funding.
-- Сделки не объединены в capital-constrained portfolio simulation.
-- Лучший вариант акций выбран на короткой годовой выборке и требует
-  out-of-sample проверки на более длинной истории.
+- The Yahoo chart endpoint is not a guaranteed production data feed.
+- Hourly OHLC cannot reconstruct queue position or the intrabar path.
+- Equity short borrow availability and borrow fees are not modeled.
+- Perpetual futures funding is not included.
+- Trades are not combined in a capital-constrained portfolio simulation.
+- Equity results use a short one-year sample and require validation on a
+  longer out-of-sample period.

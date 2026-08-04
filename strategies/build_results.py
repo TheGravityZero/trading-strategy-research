@@ -29,16 +29,16 @@ def sector_result(sector: str) -> None:
     market = (
         "Binance Public Data, 15m, 2025-07-01 — 2026-07-01"
         if sector == "crypto"
-        else "Yahoo Finance, regular session, 1h, последний доступный год"
+        else "Yahoo Finance, regular session, 1h, latest available year"
     )
     lines = [
         f"# Weekly pivot limit — {sector}",
         "",
-        f"Данные: {market}. Общая логика для всех рынков: long-only, entry 5% "
-        "ниже подтверждённого weekly pivot, SL 25%, лимитный ордер 4 часа, "
-        "удержание до 60 дней.",
+        f"Data: {market}. Shared market logic: long-only, entry 5% below a "
+        "confirmed weekly pivot, 25% SL, 4-hour limit order, and a maximum "
+        "60-day holding period.",
         "",
-        "| Конфигурация | Setups | Fills | Completed | Mean net | "
+        "| Configuration | Setups | Fills | Completed | Mean net | "
         "Median net | Win rate | TP | Stop | Time exit | Open |",
         "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
@@ -77,14 +77,14 @@ def sector_result(sector: str) -> None:
     if failures:
         lines += [
             "",
-            "Недоступные активы: "
+            "Unavailable assets: "
             + ", ".join(f"`{symbol}` ({error})" for symbol, error in failures.items())
             + ".",
         ]
     lines += [
         "",
-        "Важно: выборка сделок мала; это exploratory backtest, а не "
-        "статистическое подтверждение edge.",
+        "Note: the trade sample is small; this is an exploratory backtest, "
+        "not statistical confirmation of an edge.",
     ]
     (root / "result.md").write_text(
         "\n".join(lines) + "\n", encoding="utf-8"
@@ -96,14 +96,14 @@ def short_sector_result(sector: str) -> None:
     market = (
         "Binance Public Data, 15m, 2025-07-01 — 2026-07-01"
         if sector == "crypto"
-        else "Yahoo Finance, regular session, 1h, последний доступный год"
+        else "Yahoo Finance, regular session, 1h, latest available year"
     )
     lines = [
         f"# ATH short — {sector}",
         "",
-        f"Данные: {market}. Short-only: после обновления causal ATH лимитный "
-        "вход ставится на 7% выше ATH, SL 15%, ордер живёт 4 часа, "
-        "удержание до 60 дней.",
+        f"Data: {market}. Short-only: after a causal ATH update, a limit entry "
+        "is placed 7% above the ATH, with a 15% SL, a 4-hour order lifetime, "
+        "and a maximum 60-day holding period.",
         "",
         "| TP | Setups | Fills | Completed | Mean net | Median net | "
         "Win rate | TP hits | Stops | Time exit | Open |",
@@ -144,15 +144,15 @@ def short_sector_result(sector: str) -> None:
     if failures:
         lines += [
             "",
-            "Недоступные активы: "
+            "Unavailable assets: "
             + ", ".join(f"`{symbol}` ({error})" for symbol, error in failures.items())
             + ".",
         ]
     lines += [
         "",
-        "ATH определяется причинно как максимум всех доступных свечей до "
-        "текущей. Для акций это максимум в загруженной годовой истории, а не "
-        "полный исторический all-time high.",
+        "ATH is calculated causally as the maximum of all candles available "
+        "before the current one. For equities, this is the maximum in the "
+        "loaded one-year history, not the full historical all-time high.",
     ]
     (root / "result.md").write_text(
         "\n".join(lines) + "\n", encoding="utf-8"
@@ -164,14 +164,14 @@ def defended_pivot_sector_result(sector: str) -> None:
     market = (
         "Binance Public Data, 15m, 2025-07-01 — 2026-07-01"
         if sector == "crypto"
-        else "Yahoo Finance, regular session, 1h, последний доступный год"
+        else "Yahoo Finance, regular session, 1h, latest available year"
     )
     lines = [
         f"# Defended pivot long — {sector}",
         "",
-        f"Данные: {market}. Pivot volume ≥1.5× медианы 12 недель; первая "
-        "защита: касание ±0.5 ATR и отскок ≥1.5 ATR за 5 дней; следующий "
-        "пробой активирует limit 5% ниже pivot, SL 25%, ордер 4 часа.",
+        f"Data: {market}. Pivot volume ≥1.5× the 12-week median; first "
+        "defense: a ±0.5 ATR touch and a ≥1.5 ATR bounce within 5 days; the "
+        "next break activates a limit 5% below the pivot, 25% SL, 4-hour order.",
         "",
         "| TP | Volume pivots | Defenses | Triggers | Fills | Completed | "
         "Mean net | Win rate |",
@@ -208,15 +208,15 @@ def defended_pivot_sector_result(sector: str) -> None:
     if failures:
         lines += [
             "",
-            "Недоступные активы: "
+            "Unavailable assets: "
             + ", ".join(f"`{symbol}` ({error})" for symbol, error in failures.items())
             + ".",
         ]
     lines += [
         "",
-        "Вывод: фильтры находят защищённые уровни, но повторный пробой с "
-        "лимитным входом ещё на 5% ниже pivot не дал fills. TP пока не влияет "
-        "на результат; следующим экспериментом следует менять вход.",
+        "Conclusion: the filters find defended levels, but the repeated break "
+        "with a limit entry another 5% below the pivot produced no fills. TP "
+        "does not affect the result yet; the next experiment should change entry.",
     ]
     (root / "result.md").write_text(
         "\n".join(lines) + "\n", encoding="utf-8"
@@ -228,14 +228,14 @@ def ath_retest_sector_result(sector: str) -> None:
     market = (
         "Binance Public Data, 15m, 2025-07-01 — 2026-07-01"
         if sector == "crypto"
-        else "Yahoo Finance, regular session, 1h, последний доступный год"
+        else "Yahoo Finance, regular session, 1h, latest available year"
     )
     lines = [
         f"# ATH retest volume short — {sector}",
         "",
-        f"Данные: {market}. Коррекция после ATH ≥15%, failed retest в пределах "
-        "3% ниже ATH, entry на retest верхнего high-volume node, SL 15%, "
-        "удержание до 60 дней.",
+        f"Data: {market}. Correction after ATH ≥15%, failed retest within 3% "
+        "below ATH, entry on a retest of the upper high-volume node, 15% SL, "
+        "and a maximum 60-day holding period.",
         "",
         "| TP | Setups | Fills | Completed | Mean net | Median net | "
         "Win rate | TP hits | Stops | Time exit |",
@@ -275,14 +275,14 @@ def ath_retest_sector_result(sector: str) -> None:
     if failures:
         lines += [
             "",
-            "Недоступные активы: "
+            "Unavailable assets: "
             + ", ".join(f"`{symbol}` ({error})" for symbol, error in failures.items())
             + ".",
         ]
     lines += [
         "",
-        "ATH и volume profile рассчитываются только по данным, доступным к "
-        "моменту failed retest. Для акций ATH ограничен годовой историей.",
+        "ATH and the volume profile use only data available at the time of the "
+        "failed retest. Equity ATH is limited to the one-year history.",
     ]
     (root / "result.md").write_text(
         "\n".join(lines) + "\n", encoding="utf-8"
@@ -294,14 +294,14 @@ def defended_hvn_sector_result(sector: str, slug: str, title: str) -> None:
     market = (
         "Binance Public Data, 15m, 2025-07-01 — 2026-07-01"
         if sector == "crypto"
-        else "Yahoo Finance, regular session, 1h, последний доступный год"
+        else "Yahoo Finance, regular session, 1h, latest available year"
     )
     lines = [
         f"# {title} — {sector}",
         "",
-        f"Данные: {market}. Volume pivot ≥1.5× baseline, первая защита "
-        "≥1.5 ATR; HVN строится в зоне pivot ±1 ATR по первой защите. "
-        "SL 25%, удержание до 60 дней.",
+        f"Data: {market}. Volume pivot ≥1.5× baseline, first defense ≥1.5 ATR; "
+        "the HVN is built within pivot ±1 ATR using the first defense. "
+        "SL is 25% and the maximum holding period is 60 days.",
         "",
         "| TP | Volume pivots | Defenses | Fills | Completed | Mean net | "
         "Median net | Win rate | TP hits | Stops |",
@@ -341,7 +341,7 @@ def defended_hvn_sector_result(sector: str, slug: str, title: str) -> None:
     if failures:
         lines += [
             "",
-            "Недоступные активы: "
+            "Unavailable assets: "
             + ", ".join(f"`{symbol}` ({error})" for symbol, error in failures.items())
             + ".",
         ]
@@ -354,10 +354,10 @@ def weekly_pivot_index() -> None:
     rows = [
         "# Results",
         "",
-        "Crypto использует 15m, акции — 1h; торговая логика и конфигурация "
-        "одинаковы.",
+        "Crypto uses 15m candles and equities use 1h candles; trading logic "
+        "and configuration are identical.",
         "",
-        "[Описание стратегии](README.md)",
+        "[Strategy description](README.md)",
         "",
         "| crypto | it | semiconductors | oil | metals |",
         "|---|---|---|---|---|",
@@ -401,10 +401,10 @@ def ath_short_index() -> None:
     rows = [
         "# ATH Short Results",
         "",
-        "Entry 7% выше causal ATH, SL 15%, TP 10%/15%/20%. Crypto использует "
-        "15m, акции — 1h.",
+        "Entry 7% above causal ATH, 15% SL, TP 10%/15%/20%. Crypto uses 15m "
+        "candles and equities use 1h candles.",
         "",
-        "[Описание стратегии](README.md)",
+        "[Strategy description](README.md)",
         "",
         "| crypto | it | semiconductors | oil | metals |",
         "|---|---|---|---|---|",
@@ -428,10 +428,10 @@ def defended_pivot_index() -> None:
     rows = [
         "# Defended Pivot Long Results",
         "",
-        "Volume ratio ≥1.5, defense bounce ≥1.5 ATR за 5 дней, entry 5% "
-        "ниже pivot, SL 25%, TP 10%/15%/20%.",
+        "Volume ratio ≥1.5, defense bounce ≥1.5 ATR within 5 days, entry 5% "
+        "below the pivot, 25% SL, TP 10%/15%/20%.",
         "",
-        "[Описание стратегии](README.md)",
+        "[Strategy description](README.md)",
         "",
         "| crypto | it | semiconductors | oil | metals |",
         "|---|---|---|---|---|",
@@ -475,12 +475,12 @@ def ath_retest_index() -> None:
     rows = [
         "# ATH Retest Volume Short Results",
         "",
-        "Коррекция ≥15%, возврат в пределах 3% ниже ATH, entry на retest "
-        "верхнего high-volume node, SL 15%, TP 10%/15%/20%.",
+        "Correction ≥15%, return within 3% below ATH, entry on a retest of "
+        "the upper high-volume node, 15% SL, TP 10%/15%/20%.",
         "",
-        "[Описание стратегии](README.md)",
+        "[Strategy description](README.md)",
         "",
-        "[Сетка correction/retest/structural stop](GRID_RESULTS.md)",
+        "[Correction/retest/structural-stop grid](GRID_RESULTS.md)",
         "",
         "| crypto | it | semiconductors | oil | metals |",
         "|---|---|---|---|---|",
@@ -507,7 +507,7 @@ def defended_hvn_index(slug: str, title: str, entry: str) -> None:
         f"{entry}. Volume ratio ≥1.5, defense ≥1.5 ATR, SL 25%, "
         "TP 10%/15%/20%.",
         "",
-        "[Описание стратегии](README.md)",
+        "[Strategy description](README.md)",
         "",
         "| crypto | it | semiconductors | oil | metals |",
         "|---|---|---|---|---|",
@@ -591,16 +591,17 @@ def ath_retest_grid_result() -> None:
     lines = [
         "# ATH Retest Volume Short — parameter grid",
         "",
-        "Сетка: correction 7/10/12%, retest distance 3/5/7%, stop на ATH "
-        "или верхней границе HVN, TP 10/15/20%. Crypto — 15m, акции — 1h.",
+        "Grid: correction 7/10/12%, retest distance 3/5/7%, stop at ATH or "
+        "the HVN upper boundary, TP 10/15/20%. Crypto uses 15m candles and "
+        "equities use 1h candles.",
         "",
-        "Вывод: устойчивого положительного результата нет. Формально лучший "
-        "вариант при ≥20 сделках (7% / 7% / HVN / TP20) дал только +0.01% "
-        "mean при медиане −0.23% и 274 stop из 278 сделок. Узкий HVN-stop "
-        "почти всегда срабатывает; варианты со stop на ATH также отрицательны "
-        "на общей выборке.",
+        "Conclusion: no robust positive result was found. The nominally best "
+        "variant with ≥20 trades (7% / 7% / HVN / TP20) returned only +0.01% "
+        "mean with a −0.23% median and 274 stops out of 278 trades. The tight "
+        "HVN stop triggers almost every time; ATH-stop variants are also "
+        "negative on the aggregate sample.",
         "",
-        "## Лучшие варианты при минимум 20 завершённых сделках",
+        "## Best variants with at least 20 completed trades",
         "",
         "| Correction | Retest | Stop | TP | Trades | Mean net | Median net | Win rate | TP hits | Stops |",
         "|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|",
@@ -614,13 +615,13 @@ def ath_retest_grid_result() -> None:
         )
     lines += [
         "",
-        "## Лучший mean по сектору (без поправки на малую выборку)",
+        "## Best mean by sector (not adjusted for small samples)",
         "",
         "| Sector | Correction | Retest | Stop | TP | Trades | Mean net |",
         "|---|---:|---:|---|---:|---:|---:|",
         *sector_rows,
         "",
-        "## Полная сетка",
+        "## Full grid",
         "",
         "| Correction | Retest | Stop | TP | Trades | Mean net | Median net | Win rate | TP hits | Stops |",
         "|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|",
@@ -657,12 +658,12 @@ def main() -> None:
     defended_hvn_index(
         "defended-pivot-hvn-limit",
         "Defended Pivot HVN Limit",
-        "Вход лимитным ордером в центре HVN",
+        "Limit-order entry at the HVN center",
     )
     defended_hvn_index(
         "defended-pivot-hvn-reclaim",
         "Defended Pivot HVN Reclaim",
-        "Вход после sweep ниже HVN и закрытия обратно выше нижней границы",
+        "Entry after a sweep below the HVN and a close back above its lower boundary",
     )
 
 

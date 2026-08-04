@@ -1,10 +1,10 @@
 # ATH Retest Volume Short Results
 
-Коррекция ≥15%, возврат в пределах 3% ниже ATH, entry на retest верхнего high-volume node, SL 15%, TP 10%/15%/20%.
+Correction ≥15%, return within 3% below ATH, entry on a retest of the upper high-volume node, 15% SL, TP 10%/15%/20%.
 
-[Описание стратегии](README.md)
+[Strategy description](README.md)
 
-[Сетка correction/retest/structural stop](GRID_RESULTS.md)
+[Correction/retest/structural-stop grid](GRID_RESULTS.md)
 
 | crypto | it | semiconductors | oil | metals |
 |---|---|---|---|---|

@@ -1,42 +1,43 @@
 # Defended Pivot Long
 
-Отдельная long-only стратегия, которая торгует только недельные уровни с
-повышенным относительным объёмом и подтверждённой предыдущей защитой.
+A standalone long-only strategy that trades weekly levels with elevated
+relative volume and a confirmed prior defense.
 
-## Относительный объём
+## Relative volume
 
-Для каждой недели считается dollar volume:
+Dollar volume is calculated for each week:
 
 `weekly_dollar_volume = Σ(close × volume)`.
 
-Baseline — медиана предыдущих 12 завершённых недель, не включая pivot-неделю.
-Pivot допускается к дальнейшему анализу при:
+The baseline is the median of the previous 12 completed weeks, excluding the
+pivot week. A pivot is eligible when:
 
 `pivot_volume / baseline_volume ≥ 1.5`.
 
-Сравнение выполняется отдельно внутри каждого актива.
+The comparison is performed independently for each asset.
 
-## Первая защита уровня
+## First defense
 
-После causal-подтверждения pivot low стратегия ждёт:
+After causal confirmation of a pivot low, the strategy waits for:
 
-1. Касание зоны `pivot ± 0.5 daily ATR(14)`.
-2. Рост до `pivot + 1.5 ATR` не позднее пяти дней после касания.
+1. A touch of the `pivot ± 0.5 daily ATR(14)` zone.
+2. A rise to `pivot + 1.5 ATR` within five days of the touch.
 
-ATR использует только завершённые предыдущие дни. Вход при первой защите не
-выполняется: она только переводит уровень в состояние `defended`.
+ATR uses only previously completed days. The first defense does not trigger an
+entry; it only changes the level state to `defended`.
 
-## Торговый вход
+## Trade entry
 
-После подтверждённой защиты ожидается следующий пробой pivot сверху вниз.
-Выставляется лимитный buy:
+After defense confirmation, the strategy waits for the next downward break of
+the pivot and places a limit buy:
 
 `entry = pivot × 0.95`.
 
-Ордер действует 4 часа. Stop-loss находится на 25% ниже entry, максимальное
-удержание — 60 дней. Проверяются TP 10%, 15% и 20%.
+The order remains active for 4 hours. Stop-loss is 25% below entry, the
+maximum holding period is 60 days, and TP values of 10%, 15%, and 20% are
+tested.
 
-## Запуск
+## Run
 
 ```bash
 PYTHONPATH=src python3 strategies/run_defended_pivot_long.py \
@@ -49,11 +50,11 @@ PYTHONPATH=src python3 strategies/run_defended_pivot_long.py \
   --take-profit-percent 10
 ```
 
-Сектора: `crypto`, `it`, `semiconductors`, `oil`, `metals`.
+Sectors: `crypto`, `it`, `semiconductors`, `oil`, and `metals`.
 
-## Результаты
+## Results
 
-[Общая таблица результатов](RESULTS.md)
+[Aggregate results](RESULTS.md)
 
 - [crypto](crypto/result.md)
 - [IT](it/result.md)
@@ -61,5 +62,6 @@ PYTHONPATH=src python3 strategies/run_defended_pivot_long.py \
 - [oil](oil/result.md)
 - [metals](metals/result.md)
 
-В первой конфигурации защищённые уровни найдены, но fills отсутствуют: после
-повторного пробоя цена не достигала лимита ещё на 5% ниже pivot за четыре часа.
+The initial configuration found defended levels but produced no fills: after
+the repeated break, price did not reach the limit another 5% below the pivot
+within four hours.

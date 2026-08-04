@@ -1,78 +1,76 @@
 # Weekly Pivot Limit
 
-Long-only стратегия возврата к подтверждённому weekly pivot low для
-криптовалют и американских акций.
+A long-only mean-reversion strategy around confirmed weekly pivot lows for
+cryptocurrencies and U.S. equities.
 
-## Идея
+## Idea
 
-После пробоя значимого недельного минимума цена может сначала продолжить
-движение вниз, а затем отскочить. Стратегия не покупает непосредственно на
-уровне: после пробоя она размещает лимитный ордер ещё ниже pivot и тем самым
-пытается войти ближе к локальной капитуляции.
+After breaking a significant weekly low, price may continue lower before
+bouncing. The strategy does not buy directly at the level: after the break it
+places a limit order farther below the pivot to enter closer to local
+capitulation.
 
-## Формирование pivot
+## Pivot formation
 
-Свечи агрегируются по неделям в календаре соответствующего рынка:
+Candles are aggregated into weeks using the relevant market calendar:
 
-- crypto: UTC, основной таймфрейм `15m`;
-- акции: `America/New_York`, таймфрейм `1h`.
+- crypto: UTC, primary timeframe `15m`;
+- equities: `America/New_York`, timeframe `1h`.
 
-Недельный минимум считается pivot low, если он минимален в симметричном окне
-из пяти недель: две недели слева, текущая неделя и две недели справа. Уровень
-становится доступен стратегии только после завершения двух правых недель.
-Таким образом, в расчёте нет look-ahead: pivot нельзя использовать до момента
-его подтверждения.
+A weekly low is a pivot low when it is the minimum in a symmetric five-week
+window: two weeks to the left, the current week, and two weeks to the right.
+The level becomes available only after both right-hand weeks have closed.
+This prevents look-ahead bias: a pivot cannot be used before confirmation.
 
-## Вход
+## Entry
 
-Для каждого подтверждённого pivot используется только первый последующий
-пробой:
+Only the first subsequent break is used for each confirmed pivot:
 
-1. Закрытие предыдущей свечи находится не ниже pivot.
-2. Минимум текущей свечи проходит ниже pivot — это trigger.
-3. Выставляется лимитный buy:
+1. The previous candle closes at or above the pivot.
+2. The current candle's low crosses below the pivot, creating the trigger.
+3. Place a limit buy:
 
    `entry = pivot × (1 − entry_offset_percent / 100)`.
 
-4. Ордер действует `order_lifetime_hours`. Если цена не касается entry за это
-   время, setup остаётся незаполненным.
+4. The order remains active for `order_lifetime_hours`. If price does not
+   touch entry during that period, the setup remains unfilled.
 
-Стандартная конфигурация использует offset `5%` и срок ордера `4 часа`.
+The default configuration uses a 5% offset and a 4-hour order lifetime.
 
-## Выход
+## Exit
 
-- Take-profit задаётся как процент от entry. В текущей сетке проверяются
-  `+10%`, `+15%` и `+20%`.
-- Stop-loss по умолчанию расположен на `−25%` от entry.
-- Если TP или SL не достигнут, позиция закрывается по последней доступной цене
-  после `maximum_holding_days`; стандартно — `60 дней`.
-- Если история заканчивается раньше срока удержания, позиция получает статус
-  `open` и не включается в realised performance.
+- Take-profit is defined as a percentage above entry. The current grid tests
+  +10%, +15%, and +20%.
+- The default stop-loss is 25% below entry.
+- If neither TP nor SL is reached, the position closes at the last available
+  price after `maximum_holding_days`, normally 60 days.
+- If the history ends earlier, the position is marked `open` and excluded
+  from realized performance.
 
-На свече исполнения разрешён консервативный stop, но запрещён take-profit:
-OHLC не позволяет восстановить, произошло ли достижение TP до или после
-касания лимитного ордера. Если в последующей свече одновременно достигнуты
-stop и TP, приоритет получает stop.
+A conservative stop is allowed on the fill candle, while take-profit is
+disabled because OHLC cannot determine whether TP occurred before or after
+the limit-order touch. If stop and TP are both reached on a later candle,
+stop takes priority.
 
-## Издержки
+## Costs
 
-Net return рассчитывается после round-trip комиссии и slippage:
+Net return is calculated after round-trip fees and slippage:
 
 `net_return = gross_return − 2 × (fee_bps_per_side + slippage_bps_per_side)`.
 
-Текущие допущения:
+Current assumptions:
 
-| Рынок | Fee на сторону | Slippage на сторону | Round trip |
+| Market | Fee per side | Slippage per side | Round trip |
 |---|---:|---:|---:|
 | Crypto | 5 bps | 2 bps | 14 bps |
-| Акции | 1 bp | 3 bps | 8 bps |
+| Equities | 1 bp | 3 bps | 8 bps |
 
-Funding perpetual futures, влияние размера ордера и очередь лимитных заявок
-не моделируются.
+Perpetual futures funding, order-size impact, and limit-order queue position
+are not modeled.
 
-## Запуск
+## Run
 
-Из корня репозитория:
+From the repository root:
 
 ```bash
 PYTHONPATH=src python3 strategies/run_weekly_pivot_limit.py --sector crypto
@@ -82,7 +80,7 @@ PYTHONPATH=src python3 strategies/run_weekly_pivot_limit.py --sector oil
 PYTHONPATH=src python3 strategies/run_weekly_pivot_limit.py --sector metals
 ```
 
-Пример отдельной конфигурации:
+Example custom configuration:
 
 ```bash
 PYTHONPATH=src python3 strategies/run_weekly_pivot_limit.py \
@@ -95,11 +93,11 @@ PYTHONPATH=src python3 strategies/run_weekly_pivot_limit.py \
   --maximum-holding-days 60
 ```
 
-## Результаты
+## Results
 
-[Общая таблица результатов](RESULTS.md)
+[Aggregate results](RESULTS.md)
 
-Сводные отчёты по конфигурациям находятся в каталогах секторов:
+Sector-level configuration summaries:
 
 - [crypto](crypto/result.md)
 - [IT](it/result.md)
@@ -107,6 +105,5 @@ PYTHONPATH=src python3 strategies/run_weekly_pivot_limit.py \
 - [oil](oil/result.md)
 - [metals](metals/result.md)
 
-Количество сделок в текущей годовой выборке невелико, поэтому результаты
-следует считать exploratory и перепроверять на более длинной out-of-sample
-истории.
+The current one-year sample contains few trades, so results should be treated
+as exploratory and validated on a longer out-of-sample period.

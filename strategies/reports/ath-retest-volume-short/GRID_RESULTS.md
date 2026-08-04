@@ -1,10 +1,10 @@
 # ATH Retest Volume Short — parameter grid
 
-Сетка: correction 7/10/12%, retest distance 3/5/7%, stop на ATH или верхней границе HVN, TP 10/15/20%. Crypto — 15m, акции — 1h.
+Grid: correction 7/10/12%, retest distance 3/5/7%, stop at ATH or the HVN upper boundary, TP 10/15/20%. Crypto uses 15m candles and equities use 1h candles.
 
-Вывод: устойчивого положительного результата нет. Формально лучший вариант при ≥20 сделках (7% / 7% / HVN / TP20) дал только +0.01% mean при медиане −0.23% и 274 stop из 278 сделок. Узкий HVN-stop почти всегда срабатывает; варианты со stop на ATH также отрицательны на общей выборке.
+Conclusion: no robust positive result was found. The nominally best variant with ≥20 trades (7% / 7% / HVN / TP20) returned only +0.01% mean with a −0.23% median and 274 stops out of 278 trades. The tight HVN stop triggers almost every time; ATH-stop variants are also negative on the aggregate sample.
 
-## Лучшие варианты при минимум 20 завершённых сделках
+## Best variants with at least 20 completed trades
 
 | Correction | Retest | Stop | TP | Trades | Mean net | Median net | Win rate | TP hits | Stops |
 |---:|---:|---|---:|---:|---:|---:|---:|---:|---:|
@@ -19,7 +19,7 @@
 | 12% | 7% | HVN | 10% | 108 | -0.11% | -0.37% | 2.78% | 3 | 105 |
 | 12% | 7% | HVN | 15% | 108 | -0.12% | -0.37% | 1.85% | 2 | 106 |
 
-## Лучший mean по сектору (без поправки на малую выборку)
+## Best mean by sector (not adjusted for small samples)
 
 | Sector | Correction | Retest | Stop | TP | Trades | Mean net |
 |---|---:|---:|---|---:|---:|---:|
@@ -29,7 +29,7 @@
 | oil | 7% | 7% | HVN | 10% | 52 | -0.07% |
 | metals | 7% | 3% | HVN | 10% | 22 | 0.20% |
 
-## Полная сетка
+## Full grid
 
 | Correction | Retest | Stop | TP | Trades | Mean net | Median net | Win rate | TP hits | Stops |
 |---:|---:|---|---:|---:|---:|---:|---:|---:|---:|

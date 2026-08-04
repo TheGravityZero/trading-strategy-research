@@ -1,36 +1,37 @@
 # ATH Retest Volume Short
 
-Отдельная short-only стратегия: вход выполняется не на каждом ATH, а после
-значительной коррекции и неудачного возврата к прежнему максимуму.
+A standalone short-only strategy that enters after a significant correction
+and a failed return to the previous ATH rather than shorting every new ATH.
 
-## Сценарий
+## Scenario
 
-1. Фиксируется causal ATH.
-2. Цена корректируется минимум на настраиваемую величину от ATH.
-3. Затем high возвращается в заданную зону ниже ATH, но не обновляет максимум.
-4. На данных от ATH до failed retest строится volume profile из 30 корзин.
-5. В верхней половине диапазона выбирается high-volume node с максимальным
-   dollar volume.
-6. После ухода цены ниже HVN стратегия ждёт обратный retest зоны снизу и
-   открывает short по цене node.
+1. Record the causal ATH.
+2. Wait for a configurable minimum correction from the ATH.
+3. Wait for the high to return to a configured zone below the ATH without
+   setting a new maximum.
+4. Build a 30-bin volume profile from the ATH through the failed retest.
+5. Select the high-volume node with the highest dollar volume in the upper
+   half of the range.
+6. After price breaks below the HVN, wait for a retest from below and enter
+   short at the node price.
 
-Ордер на retest действует 5 дней. Одновременно по символу допускается только
-одна позиция или ожидающий сценарий.
+The retest order remains active for 5 days. Only one position or pending setup
+is allowed per symbol.
 
-## Риск и выход
+## Risk and exit
 
-- Stop-loss: фиксированный процент выше entry, causal ATH или верхняя граница
-  HVN-корзины.
-- Take-profit: `10%`, `15%` или `20%` ниже entry.
-- Максимальное удержание: `60 дней`.
-- На свече исполнения take-profit запрещён, stop разрешён консервативно.
-- Издержки: 14 bps round trip для crypto, 8 bps для акций.
+- Stop-loss: a fixed percentage above entry, the causal ATH, or the upper
+  boundary of the HVN bin.
+- Take-profit: 10%, 15%, or 20% below entry.
+- Maximum holding period: 60 days.
+- TP is disabled on the fill candle; a conservative stop remains enabled.
+- Costs: 14 bps round trip for crypto and 8 bps for equities.
 
-Volume profile является приближённым: весь объём OHLC-свечи относится к её
-typical price `(high + low + close) / 3`. Для точного профиля нужны trades или
-свечи меньшего таймфрейма.
+The volume profile is approximate: all volume in an OHLC candle is assigned
+to its typical price, `(high + low + close) / 3`. An exact profile would
+require trade-level data or lower-timeframe candles.
 
-## Запуск
+## Run
 
 ```bash
 PYTHONPATH=src python3 strategies/run_ath_retest_volume_short.py \
@@ -43,19 +44,19 @@ PYTHONPATH=src python3 strategies/run_ath_retest_volume_short.py \
   --stop-mode ath
 ```
 
-Полная сетка `correction 7/10/12% × retest 3/5/7% × stop ATH/HVN × TP
-10/15/20%` запускается отдельно:
+Run the complete `correction 7/10/12% × retest 3/5/7% × stop ATH/HVN × TP
+10/15/20%` grid separately:
 
 ```bash
 PYTHONPATH=src python3 strategies/run_ath_retest_volume_grid.py \
   --sector semiconductors
 ```
 
-## Результаты
+## Results
 
-[Общая таблица результатов](RESULTS.md)
+[Aggregate results](RESULTS.md)
 
-[Результаты новой сетки параметров](GRID_RESULTS.md)
+[Parameter-grid results](GRID_RESULTS.md)
 
 - [crypto](crypto/result.md)
 - [IT](it/result.md)

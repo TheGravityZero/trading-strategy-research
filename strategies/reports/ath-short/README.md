@@ -1,33 +1,33 @@
 # ATH Short
 
-Отдельная short-only стратегия для криптовалют и американских акций.
+A standalone short-only strategy for cryptocurrencies and U.S. equities.
 
-## Идея и сигнал
+## Idea and signal
 
-Перед каждой свечой рассчитывается causal ATH — максимальный high всей истории,
-доступной строго до этой свечи. Когда текущая свеча обновляет максимум,
-стратегия размещает лимитный short ещё на `7%` выше прежнего ATH:
+Before each candle, the strategy calculates the causal ATH: the highest high
+strictly available before that candle. When the current candle sets a new
+high, the strategy places a limit short 7% above the previous ATH:
 
 `entry = prior_ath × 1.07`.
 
-Ордер действует `4 часа`. Одновременно на символ разрешён только один активный
-ордер или short. Для акций ATH ограничен доступной годовой историей Yahoo; это
-не полный биржевой all-time high.
+The order remains active for 4 hours. Only one active order or short position
+is allowed per symbol. For equities, ATH is limited to the available one-year
+Yahoo history and is not the full exchange all-time high.
 
-## Выход
+## Exit
 
-- Stop-loss: `15%` выше цены входа.
-- Take-profit: проверяются варианты `10%`, `15%` и `20%` ниже входа.
-- Максимальное удержание: `60 дней`.
-- На свече исполнения TP запрещён из-за неизвестного intrabar path, stop
-  разрешён консервативно.
-- Если TP и stop достигнуты в одной последующей свече, приоритет имеет stop.
+- Stop-loss: 15% above entry.
+- Take-profit variants: 10%, 15%, and 20% below entry.
+- Maximum holding period: 60 days.
+- TP is disabled on the fill candle because the intrabar path is unknown; a
+  conservative stop remains enabled.
+- If TP and stop are both reached on a later candle, stop takes priority.
 
-Crypto работает на `15m`, акции — на `1h`. Из результата вычитаются round-trip
-fee и slippage: `14 bps` для crypto и `8 bps` для акций. Funding, borrow fee,
-очередь лимитных заявок и market impact не моделируются.
+Crypto uses 15m candles and equities use 1h candles. Round-trip fees and
+slippage are deducted: 14 bps for crypto and 8 bps for equities. Funding,
+borrow fees, limit-order queue position, and market impact are not modeled.
 
-## Запуск
+## Run
 
 ```bash
 PYTHONPATH=src python3 strategies/run_ath_short.py \
@@ -39,11 +39,11 @@ PYTHONPATH=src python3 strategies/run_ath_short.py \
   --maximum-holding-days 60
 ```
 
-Сектора: `crypto`, `it`, `semiconductors`, `oil`, `metals`.
+Sectors: `crypto`, `it`, `semiconductors`, `oil`, and `metals`.
 
-## Результаты
+## Results
 
-[Общая таблица результатов](RESULTS.md)
+[Aggregate results](RESULTS.md)
 
 - [crypto](crypto/result.md)
 - [IT](it/result.md)

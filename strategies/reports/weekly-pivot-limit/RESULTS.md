@@ -1,8 +1,8 @@
 # Results
 
-Crypto использует 15m, акции — 1h; торговая логика и конфигурация одинаковы.
+Crypto uses 15m candles and equities use 1h candles; trading logic and configuration are identical.
 
-[Описание стратегии](README.md)
+[Strategy description](README.md)
 
 | crypto | it | semiconductors | oil | metals |
 |---|---|---|---|---|

@@ -1,8 +1,8 @@
 # Defended Pivot Long Results
 
-Volume ratio ≥1.5, defense bounce ≥1.5 ATR за 5 дней, entry 5% ниже pivot, SL 25%, TP 10%/15%/20%.
+Volume ratio ≥1.5, defense bounce ≥1.5 ATR within 5 days, entry 5% below the pivot, 25% SL, TP 10%/15%/20%.
 
-[Описание стратегии](README.md)
+[Strategy description](README.md)
 
 | crypto | it | semiconductors | oil | metals |
 |---|---|---|---|---|

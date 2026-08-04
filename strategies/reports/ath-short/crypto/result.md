@@ -1,6 +1,6 @@
 # ATH short — crypto
 
-Данные: Binance Public Data, 15m, 2025-07-01 — 2026-07-01. Short-only: после обновления causal ATH лимитный вход ставится на 7% выше ATH, SL 15%, ордер живёт 4 часа, удержание до 60 дней.
+Data: Binance Public Data, 15m, 2025-07-01 — 2026-07-01. Short-only: after a causal ATH update, a limit entry is placed 7% above the ATH, with a 15% SL, a 4-hour order lifetime, and a maximum 60-day holding period.
 
 | TP | Setups | Fills | Completed | Mean net | Median net | Win rate | TP hits | Stops | Time exit | Open |
 |---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -8,6 +8,6 @@
 | 15% | 101 | 0 | 0 | — | — | — | 0 | 0 | 0 | 0 |
 | 20% | 101 | 0 | 0 | — | — | — | 0 | 0 | 0 | 0 |
 
-Недоступные активы: `HYPEUSDT` (No kline archives for HYPEUSDT).
+Unavailable assets: `HYPEUSDT` (No kline archives for HYPEUSDT).
 
-ATH определяется причинно как максимум всех доступных свечей до текущей. Для акций это максимум в загруженной годовой истории, а не полный исторический all-time high.
+ATH is calculated causally as the maximum of all candles available before the current one. For equities, this is the maximum in the loaded one-year history, not the full historical all-time high.

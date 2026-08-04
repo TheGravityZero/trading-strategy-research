@@ -1,7 +1,7 @@
 # Strategy runners
 
-В этой папке находятся независимые Python launchers торговых стратегий и
-результаты запусков различных конфигураций.
+This directory contains independent Python strategy launchers and results for
+their tested configurations.
 
 ```text
 strategies/
@@ -16,25 +16,25 @@ strategies/
 └── reports/
     └── <strategy>/
         └── <sector>/
-            ├── result.md              # сводка конфигураций, committed
+            ├── result.md              # committed configuration summary
             └── <configuration>/
-                ├── metadata.json      # генерируется локально, ignored
-                └── trades/summary.csv # генерируется локально, ignored
+                ├── metadata.json      # generated locally, ignored
+                └── trades/summary.csv # generated locally, ignored
 ```
 
-Запуск производится из корня репозитория с `PYTHONPATH=src`. Все параметры
-можно посмотреть через `--help`.
+Run launchers from the repository root with `PYTHONPATH=src`. Use `--help` to
+view all available parameters.
 
-Сектора: `crypto`, `it`, `semiconductors`, `oil`, `metals`. Текущая
-вселенная сектора `crypto`: `HYPEUSDT`, `BTCUSDT`, `SOLUSDT`, `ETHUSDT`.
+Sectors: `crypto`, `it`, `semiconductors`, `oil`, and `metals`. The current
+crypto universe is `HYPEUSDT`, `BTCUSDT`, `SOLUSDT`, and `ETHUSDT`.
 
-После backtest-запусков Markdown-отчёты обновляются командой:
+After running backtests, rebuild the Markdown reports with:
 
 ```bash
 PYTHONPATH=src python3 strategies/build_results.py
 ```
 
-Сводные матрицы:
+Result matrices:
 
 - [`reports/weekly-pivot-limit/RESULTS.md`](reports/weekly-pivot-limit/RESULTS.md)
 - [`reports/ath-short/RESULTS.md`](reports/ath-short/RESULTS.md)

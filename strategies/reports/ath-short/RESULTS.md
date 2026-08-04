@@ -1,8 +1,8 @@
 # ATH Short Results
 
-Entry 7% выше causal ATH, SL 15%, TP 10%/15%/20%. Crypto использует 15m, акции — 1h.
+Entry 7% above causal ATH, 15% SL, TP 10%/15%/20%. Crypto uses 15m candles and equities use 1h candles.
 
-[Описание стратегии](README.md)
+[Strategy description](README.md)
 
 | crypto | it | semiconductors | oil | metals |
 |---|---|---|---|---|

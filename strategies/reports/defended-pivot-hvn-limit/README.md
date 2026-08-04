@@ -1,24 +1,25 @@
 # Defended Pivot HVN Limit
 
-Отдельная long-only стратегия для уже защищённого weekly pivot с повышенным
-относительным объёмом.
+A standalone long-only strategy for an already-defended weekly pivot with
+elevated relative volume.
 
-После первой защиты строится volume profile в диапазоне `pivot ±1 ATR`:
+After the first defense, it builds a volume profile within `pivot ±1 ATR`:
 
-- окно профиля: первое касание → подтверждение отскока 1.5 ATR;
-- 30 ценовых корзин;
-- вес: `close × volume`;
-- HVN — корзина с максимальным dollar volume.
+- profile window: first touch through confirmation of a 1.5 ATR bounce;
+- 30 price bins;
+- weight: `close × volume`;
+- HVN: the bin with the highest dollar volume.
 
-После следующего пробоя pivot выставляется limit buy в центре HVN. Ордер живёт
-5 дней. SL — 25%, TP — 10%/15%/20%, удержание — до 60 дней.
+After the next pivot break, the strategy places a limit buy at the HVN center.
+The order remains active for 5 days. SL is 25%, TP is 10%/15%/20%, and the
+maximum holding period is 60 days.
 
 ```bash
 PYTHONPATH=src python3 strategies/run_defended_pivot_hvn_limit.py \
   --sector crypto --take-profit-percent 10
 ```
 
-[Общие результаты](RESULTS.md)
+[Aggregate results](RESULTS.md)
 
 - [crypto](crypto/result.md)
 - [IT](it/result.md)
