@@ -62,7 +62,7 @@ def run(entry_mode: str, report_slug: str) -> None:
         market_timezone="UTC" if args.sector == "crypto" else "America/New_York",
     )
     output = args.output_dir or (
-        Path("strategies/reports") / report_slug / args.sector / "latest"
+        Path("research/reports") / report_slug / args.sector / "latest"
     )
     if args.sector != "crypto":
         run_defended_pivot_equities(

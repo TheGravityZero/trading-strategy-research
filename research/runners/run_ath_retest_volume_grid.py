@@ -76,7 +76,7 @@ def main() -> None:
     args = parser.parse_args()
     frames, failures, source, interval, range_ = load_frames(args)
     root = args.output_root or (
-        Path("strategies/reports/ath-retest-volume-short/grid") / args.sector
+        Path("research/reports/ath-retest-volume-short/grid") / args.sector
     )
     for correction in CORRECTIONS:
         for retest in RETEST_DISTANCES:

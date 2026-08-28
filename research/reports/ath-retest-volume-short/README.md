@@ -34,7 +34,7 @@ require trade-level data or lower-timeframe candles.
 ## Run
 
 ```bash
-PYTHONPATH=src python3 strategies/run_ath_retest_volume_short.py \
+PYTHONPATH=src python3 research/runners/run_ath_retest_volume_short.py \
   --sector semiconductors \
   --minimum-correction-percent 15 \
   --ath-retest-distance-percent 3 \
@@ -48,7 +48,7 @@ Run the complete `correction 7/10/12% × retest 3/5/7% × stop ATH/HVN × TP
 10/15/20%` grid separately:
 
 ```bash
-PYTHONPATH=src python3 strategies/run_ath_retest_volume_grid.py \
+PYTHONPATH=src python3 research/runners/run_ath_retest_volume_grid.py \
   --sector semiconductors
 ```
 

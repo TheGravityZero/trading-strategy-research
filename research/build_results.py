@@ -9,12 +9,16 @@ from pathlib import Path
 import pandas as pd
 
 
-REPORTS = Path("strategies/reports")
+REPORTS = Path("research/reports")
 SECTORS = ("crypto", "it", "semiconductors", "oil", "metals")
 
 
 def percent(value: float) -> str:
     return "—" if pd.isna(value) else f"{value * 100:.2f}%"
+
+
+def decimal(value: float) -> str:
+    return "—" if pd.isna(value) else f"{value:.3f}"
 
 
 def read_csv(path: Path) -> pd.DataFrame:
@@ -520,6 +524,50 @@ def defended_hvn_index(slug: str, title: str, entry: str) -> None:
     )
 
 
+def crypto_stat_arb_index() -> None:
+    """Build the stat-arb index from the launcher's latest metadata."""
+    root = REPORTS / "crypto-stat-arb"
+    latest = root / "latest" / "metadata.json"
+    rows = [
+        "# Crypto Rolling Regression Stat-Arb Results",
+        "",
+        "[Strategy description](README.md)",
+        "",
+    ]
+    if not latest.exists():
+        rows += [
+            "No canonical backtest has been generated yet. Run the launcher "
+            "shown in the strategy description, then rebuild this file.",
+        ]
+    else:
+        metadata = json.loads(latest.read_text(encoding="utf-8"))
+        summary = metadata["summary"]
+        config = metadata["config"]
+        rows += [
+            f"Pair `{metadata['pair']}`, interval `{metadata['interval']}`, "
+            f"period `{metadata.get('start') or '—'}` — `{metadata.get('end') or '—'}`.",
+            "",
+            "| Trades | Total return | Maximum drawdown | Bar Sharpe | Turnover |",
+            "|---:|---:|---:|---:|---:|",
+            f"| {summary['trades']} | {percent(summary['total_return'])} | "
+            f"{percent(summary['maximum_drawdown'])} | "
+            f"{decimal(summary['bar_sharpe'])} | {summary['turnover']:.2f} |",
+            "",
+            "| Regression window | Z-score window | Correlation window | "
+            "Minimum correlation | Entry / exit / stop z-score |",
+            "|---:|---:|---:|---:|---:|",
+            f"| {config['regression_window']} | {config['zscore_window']} | "
+            f"{config['correlation_window']} | {config['minimum_correlation']:.2f} | "
+            f"{config['entry_zscore']:.2f} / {config['exit_zscore']:.2f} / "
+            f"{config['stop_zscore']:.2f} |",
+            "",
+            "The Sharpe value is per-bar and is not annualized. Results include "
+            "configured fees and slippage but exclude funding and market impact.",
+        ]
+    root.mkdir(parents=True, exist_ok=True)
+    (root / "RESULTS.md").write_text("\n".join(rows) + "\n", encoding="utf-8")
+
+
 def ath_retest_grid_result() -> None:
     root = REPORTS / "ath-retest-volume-short" / "grid"
     rows = []
@@ -665,6 +713,7 @@ def main() -> None:
         "Defended Pivot HVN Reclaim",
         "Entry after a sweep below the HVN and a close back above its lower boundary",
     )
+    crypto_stat_arb_index()
 
 
 if __name__ == "__main__":

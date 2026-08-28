@@ -30,7 +30,7 @@ borrow fees, limit-order queue position, and market impact are not modeled.
 ## Run
 
 ```bash
-PYTHONPATH=src python3 strategies/run_ath_short.py \
+PYTHONPATH=src python3 research/runners/run_ath_short.py \
   --sector semiconductors \
   --entry-offset-percent 7 \
   --take-profit-percent 10 \

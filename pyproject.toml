@@ -12,6 +12,9 @@ dependencies = [
   "pandas>=2.0",
 ]
 
+[project.optional-dependencies]
+ml = ["torch>=2.1"]
+
 [project.scripts]
 trading-strategy = "trading_strategy.cli:main"
 

@@ -40,7 +40,7 @@ tested.
 ## Run
 
 ```bash
-PYTHONPATH=src python3 strategies/run_defended_pivot_long.py \
+PYTHONPATH=src python3 research/runners/run_defended_pivot_long.py \
   --sector crypto \
   --minimum-volume-ratio 1.5 \
   --touch-zone-atr 0.5 \

@@ -23,6 +23,7 @@ from .weekly_pivot_limit import (
     backtest_weekly_pivot,
     run_weekly_pivot_study,
 )
+from .stat_arb import StatArbConfig, backtest_stat_arb, build_pair_features
 
 __all__ = [
     "AthShortConfig",
@@ -40,4 +41,7 @@ __all__ = [
     "WeeklyPivotConfig",
     "backtest_weekly_pivot",
     "run_weekly_pivot_study",
+    "StatArbConfig",
+    "backtest_stat_arb",
+    "build_pair_features",
 ]

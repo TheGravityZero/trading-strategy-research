@@ -12,7 +12,7 @@ The reclaim window is 5 days. SL is 25%, TP is 10%/15%/20%, and the maximum
 holding period is 60 days.
 
 ```bash
-PYTHONPATH=src python3 strategies/run_defended_pivot_hvn_reclaim.py \
+PYTHONPATH=src python3 research/runners/run_defended_pivot_hvn_reclaim.py \
   --sector crypto --take-profit-percent 10
 ```
 

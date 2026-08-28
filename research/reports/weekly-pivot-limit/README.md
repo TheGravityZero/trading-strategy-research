@@ -73,17 +73,17 @@ are not modeled.
 From the repository root:
 
 ```bash
-PYTHONPATH=src python3 strategies/run_weekly_pivot_limit.py --sector crypto
-PYTHONPATH=src python3 strategies/run_weekly_pivot_limit.py --sector it
-PYTHONPATH=src python3 strategies/run_weekly_pivot_limit.py --sector semiconductors
-PYTHONPATH=src python3 strategies/run_weekly_pivot_limit.py --sector oil
-PYTHONPATH=src python3 strategies/run_weekly_pivot_limit.py --sector metals
+PYTHONPATH=src python3 research/runners/run_weekly_pivot_limit.py --sector crypto
+PYTHONPATH=src python3 research/runners/run_weekly_pivot_limit.py --sector it
+PYTHONPATH=src python3 research/runners/run_weekly_pivot_limit.py --sector semiconductors
+PYTHONPATH=src python3 research/runners/run_weekly_pivot_limit.py --sector oil
+PYTHONPATH=src python3 research/runners/run_weekly_pivot_limit.py --sector metals
 ```
 
 Example custom configuration:
 
 ```bash
-PYTHONPATH=src python3 strategies/run_weekly_pivot_limit.py \
+PYTHONPATH=src python3 research/runners/run_weekly_pivot_limit.py \
   --sector crypto \
   --crypto-interval 30min \
   --entry-offset-percent 5 \

@@ -59,7 +59,7 @@ def run_crypto(args: argparse.Namespace) -> None:
     run_ath_short_frames(
         frames,
         args.output_dir
-        or Path("strategies/reports/ath-short/crypto/latest"),
+        or Path("research/reports/ath-short/crypto/latest"),
         config_from_args(args),
         source="Binance Public Data",
         interval=args.crypto_interval,
@@ -72,7 +72,7 @@ def run_equities(args: argparse.Namespace) -> None:
     run_ath_short_equities(
         args.data_dir or Path("data/us-equities/hourly-1y"),
         args.output_dir
-        or Path("strategies/reports/ath-short") / args.sector / "latest",
+        or Path("research/reports/ath-short") / args.sector / "latest",
         stock_symbols(args.sector, args.symbols),
         config_from_args(args),
     )
