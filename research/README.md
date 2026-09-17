@@ -79,6 +79,17 @@ Both select pairs on train and execute close-based signals at the next open.
 Mean Reversion additionally applies a rolling stationarity gate, loss and
 holding limits, and a cooldown. See each strategy's report for assumptions.
 
+## Execution and robustness audit
+
+[Audit results](reports/execution-audit/RESULTS.md) include actual-notional pair
+costs, quarterly chronological tests, ten-asset pivot portfolios and open-trade
+marks. [Methodology](reports/execution-audit/README.md) describes the accounting
+and limitations; legacy pair figures are preserved for comparison.
+
+```bash
+PYTHONPATH=src .venv/bin/python research/runners/run_execution_audit.py
+```
+
 ## Rebuild reports
 
 After running backtests, rebuild the consolidated summary and strategy reports:

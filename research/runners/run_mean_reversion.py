@@ -14,7 +14,7 @@ from trading_strategy.strategies.mean_reversion import (
 )
 
 
-def load_complete_bars(raw_dir, symbol, start, end, interval):
+def load_complete_bars(raw_dir, symbol, start, end, interval, *, include_ohlcv=False):
     """Use one native resolution; reject partial aggregate bars and duplicates."""
     target = pd.Timedelta(interval)
     for native, frequency in [('1h', '1h'), ('30m', '30min'), ('15m', '15min'), ('1m', '1min')]:
@@ -47,6 +47,15 @@ def load_complete_bars(raw_dir, symbol, start, end, interval):
         raise ValueError(f'Missing source bars for {symbol}; choose a fully covered range')
     if not np.isfinite(frame[['open', 'close']]).all().all() or not (frame[['open', 'close']] > 0).all().all():
         raise ValueError(f'Invalid source prices for {symbol}')
+    if include_ohlcv:
+        fields = frame[['open', 'high', 'low', 'close', 'volume']]
+        if not np.isfinite(fields).all().all() or (fields.volume < 0).any() or not (fields[['open', 'high', 'low', 'close']] > 0).all().all():
+            raise ValueError(f'Invalid OHLCV for {symbol}')
+        if (fields.high < fields[['open', 'close', 'low']].max(axis=1)).any() or (fields.low > fields[['open', 'close', 'high']].min(axis=1)).any():
+            raise ValueError(f'Invalid OHLC relation for {symbol}')
+        return frame.resample(interval).agg(open=('open', 'first'), high=('high', 'max'),
+                                          low=('low', 'min'), close=('close', 'last'),
+                                          volume=('volume', 'sum'))
     return frame.resample(interval).agg(open=('open', 'first'), close=('close', 'last'))
 
 

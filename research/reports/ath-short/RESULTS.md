@@ -8,7 +8,9 @@ Entry 7% above causal ATH, 15% SL, TP 10%/15%/20%. Crypto uses 15m candles and e
 |---|---|---|---|---|
 | [result](crypto/result.md) | [result](it/result.md) | [result](semiconductors/result.md) | [result](oil/result.md) | [result](metals/result.md) |
 
-### Aggregate equity result
+### Aggregate completed equity trades
+
+Open positions are excluded here; sector reports below include their last-close marks.
 
 | TP | Trades | Mean net | Median net | Win rate | TP hits | Stops |
 |---:|---:|---:|---:|---:|---:|---:|

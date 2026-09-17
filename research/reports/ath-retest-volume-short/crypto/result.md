@@ -11,3 +11,13 @@ Data: Binance Public Data, 15m, 2025-07-01 — 2026-07-01. Correction after ATH 
 Unavailable assets: `HYPEUSDT` (No kline archives for HYPEUSDT).
 
 ATH and the volume profile use only data available at the time of the failed retest. Equity ATH is limited to the one-year history.
+
+## All filled trades, including marked open positions
+
+| TP | Filled | Closed | Open | Mean gross, all | Mean net, all | Mean modeled costs |
+|---:|---:|---:|---:|---:|---:|---:|
+| 10% | 2 | 2 | 0 | -2.50% | -2.64% | 0.14% |
+| 15% | 2 | 2 | 0 | 0.00% | -0.14% | 0.14% |
+| 20% | 2 | 2 | 0 | 2.50% | 2.36% | 0.14% |
+
+Open trades use their saved last-close mark and modeled round-trip costs (including a hypothetical exit). These are trade averages, not portfolio returns; overlapping signals and capital allocation are not resolved by this table.

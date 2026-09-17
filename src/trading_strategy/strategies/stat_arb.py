@@ -163,7 +163,7 @@ def write_stat_arb_results(
     result.to_csv(output_dir / "bars.csv", index=False)
     metadata = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "strategy": "RollingRegressionStatArb",
+        "strategy": "CombinedStatArb",
         "pair": f"{y_symbol}/{x_symbol}",
         "interval": interval,
         "start": result["timestamp"].min().isoformat() if len(result) else None,

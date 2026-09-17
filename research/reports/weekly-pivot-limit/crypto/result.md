@@ -11,3 +11,13 @@ Data: Binance Public Data, 15m, 2025-07-01 — 2026-07-01. Shared market logic: 
 Unavailable assets: `HYPEUSDT` (No kline archives for HYPEUSDT).
 
 Note: the trade sample is small; this is an exploratory backtest, not statistical confirmation of an edge.
+
+## All filled trades, including marked open positions
+
+| TP | Filled | Closed | Open | Mean gross, all | Mean net, all | Mean modeled costs |
+|---:|---:|---:|---:|---:|---:|---:|
+| 10% | 4 | 4 | 0 | 4.77% | 4.63% | 0.14% |
+| 15% | 4 | 4 | 0 | -2.05% | -2.19% | 0.14% |
+| 20% | 4 | 4 | 0 | -0.80% | -0.94% | 0.14% |
+
+Open trades use their saved last-close mark and modeled round-trip costs (including a hypothetical exit). These are trade averages, not portfolio returns; overlapping signals and capital allocation are not resolved by this table.

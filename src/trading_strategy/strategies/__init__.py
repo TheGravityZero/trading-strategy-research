@@ -24,12 +24,14 @@ from .weekly_pivot_limit import (
     run_weekly_pivot_study,
 )
 from .stat_arb import StatArbConfig, backtest_stat_arb, build_pair_features
-
+from .correlation_divergence import (
+    CorrelationDivergenceConfig,
+    backtest_correlation_divergence,
+)
+from .regression_spread import RegressionSpreadConfig, backtest_regression_spread
 from .mean_reversion import MeanReversionConfig, backtest_mean_reversion
 
 __all__ = [
-    "MeanReversionConfig",
-    "backtest_mean_reversion",
     "AthShortConfig",
     "backtest_ath_short",
     "run_ath_short_equities",
@@ -48,4 +50,10 @@ __all__ = [
     "StatArbConfig",
     "backtest_stat_arb",
     "build_pair_features",
+    "CorrelationDivergenceConfig",
+    "backtest_correlation_divergence",
+    "RegressionSpreadConfig",
+    "backtest_regression_spread",
+    "MeanReversionConfig",
+    "backtest_mean_reversion",
 ]

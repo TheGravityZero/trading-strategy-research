@@ -7,3 +7,13 @@ Data: Yahoo Finance, regular session, 1h, latest available year. Volume pivot �
 | 10% | 4 | 3 | 0 | 0 | — | — | — | 0 | 0 |
 | 15% | 4 | 3 | 0 | 0 | — | — | — | 0 | 0 |
 | 20% | 4 | 3 | 0 | 0 | — | — | — | 0 | 0 |
+
+## All filled trades, including marked open positions
+
+| TP | Filled | Closed | Open | Mean gross, all | Mean net, all | Mean modeled costs |
+|---:|---:|---:|---:|---:|---:|---:|
+| 10% | 0 | 0 | 0 | — | — | — |
+| 15% | 0 | 0 | 0 | — | — | — |
+| 20% | 0 | 0 | 0 | — | — | — |
+
+Open trades use their saved last-close mark and modeled round-trip costs (including a hypothetical exit). These are trade averages, not portfolio returns; overlapping signals and capital allocation are not resolved by this table.

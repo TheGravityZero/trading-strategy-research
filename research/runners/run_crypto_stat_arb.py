@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the rolling-regression crypto pair baseline."""
+"""Run combined stat-arb (legacy launcher; prefer run_combined_stat_arb.py)."""
 
 from __future__ import annotations
 
