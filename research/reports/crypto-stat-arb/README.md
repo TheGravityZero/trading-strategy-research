@@ -1,4 +1,4 @@
-# Crypto Rolling Regression Stat-Arb
+# Crypto Combined Stat-Arb
 
 A market-neutral research baseline for a pair of liquid cryptocurrency
 perpetual futures. The default pair treats ETHUSDT as the dependent leg (`y`)
@@ -15,11 +15,14 @@ The intercept and hedge ratio use only bars completed before the current bar.
 The current spread is standardized against the prior rolling spread history.
 A separate rolling correlation of pair returns filters weak relationships.
 
-This combines three transparent baselines:
+This is the combined baseline:
 
 - correlation as a market-regime filter;
 - linear regression as a dynamic hedge-ratio estimator;
 - statistical mean reversion through the spread z-score.
+
+For component-level comparisons, see [Correlation Divergence](../correlation-divergence/README.md)
+and [Rolling Regression Spread](../regression-spread/README.md).
 
 Rolling regression is not a formal cointegration test. A later research stage
 should add ADF/Engle–Granger diagnostics and reject unstable pairs before
@@ -58,7 +61,7 @@ First download matching histories for both symbols, then run from the repository
 root:
 
 ```bash
-PYTHONPATH=src .venv/bin/python research/runners/run_crypto_stat_arb.py \
+PYTHONPATH=src .venv/bin/python research/runners/run_combined_stat_arb.py \
   --y-symbol ETHUSDT \
   --x-symbol BTCUSDT \
   --start 2025-01-01 \

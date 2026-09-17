@@ -8,10 +8,17 @@ system.
 
 ## Implemented strategies
 
+[Consolidated results for all strategies](research/RESULTS.md).
+
 The [Mean Reversion strategy](research/reports/mean-reversion/README.md) adds
 rolling ADF regime checks, holding/loss limits and cooldown to train-selected
 spread trading. Run `research/runners/run_mean_reversion.py`; the saved
 ten-symbol experiment selected no pairs after Holm correction.
+
+The separate [Engle–Granger strategy](research/reports/cointegration/README.md)
+screens pairs on train with Holm correction and trades the held-out test period
+using next-open execution and fixed quantities. Launcher:
+`research/runners/run_cointegration.py` (requires the `research` extra).
 
 | Strategy | Sectors | Current result | Launcher | Report |
 |---|---|---|---|---|
@@ -21,7 +28,9 @@ ten-symbol experiment selected no pairs after Holm correction.
 | Defended pivot long | crypto, it, semiconductors, oil, metals | Defenses found, no fills | `research/runners/run_defended_pivot_long.py` | `research/reports/defended-pivot-long/` |
 | Defended pivot HVN limit | crypto, it, semiconductors, oil, metals | Entry at the center of the volume zone | `research/runners/run_defended_pivot_hvn_limit.py` | `research/reports/defended-pivot-hvn-limit/` |
 | Defended pivot HVN reclaim | crypto, it, semiconductors, oil, metals | Entry after reclaiming the volume zone | `research/runners/run_defended_pivot_hvn_reclaim.py` | `research/reports/defended-pivot-hvn-reclaim/` |
-| Rolling regression stat-arb | crypto pairs | Correlation filter + causal hedge ratio + spread z-score | `research/runners/run_crypto_stat_arb.py` | `research/reports/crypto-stat-arb/` |
+| Correlation divergence | crypto pairs | Equal-weight relative-price divergence + correlation filter | `research/runners/run_correlation_divergence.py` | `research/reports/correlation-divergence/` |
+| Rolling regression spread | crypto pairs | Causal dynamic hedge ratio + residual z-score | `research/runners/run_regression_spread.py` | `research/reports/regression-spread/` |
+| Combined stat-arb | crypto pairs | Correlation filter + causal hedge ratio + spread z-score | `research/runners/run_combined_stat_arb.py` | `research/reports/crypto-stat-arb/` |
 
 ## Repository structure
 
@@ -135,7 +144,7 @@ bars, trades spread z-score mean reversion, and applies each signal to the next
 bar. Returns include explicit fees/slippage and beta-normalized long/short legs.
 
 ```bash
-PYTHONPATH=src python3 research/runners/run_crypto_stat_arb.py \
+PYTHONPATH=src python3 research/runners/run_combined_stat_arb.py \
   --y-symbol ETHUSDT --x-symbol BTCUSDT \
   --start 2025-01-01 --end 2026-01-01 --interval 1h
 ```
@@ -163,6 +172,9 @@ regression strategy remains the transparent benchmark it must outperform.
 Configuration summaries are stored in sector-level `result.md` files under
 [`research/reports`](research/reports). CSV/JSON artifacts are generated
 locally and excluded from Git.
+
+The separate hourly crypto/U.S.-equity correlation studies are indexed in
+[`research/reports/cross-asset-correlation`](research/reports/cross-asset-correlation/README.md).
 
 ## Tests
 

@@ -13,7 +13,10 @@ research/
 │   ├── run_defended_pivot_hvn_reclaim.py
 │   ├── run_defended_pivot_long.py
 │   ├── run_weekly_pivot_limit.py
-│   └── run_crypto_stat_arb.py
+│   ├── run_correlation_divergence.py
+│   ├── run_regression_spread.py
+│   ├── run_cross_asset_correlations.py
+│   └── run_combined_stat_arb.py
 ├── build_results.py
 └── reports/
     └── <strategy>/
@@ -36,10 +39,12 @@ After running backtests, rebuild the Markdown reports with:
 PYTHONPATH=src python3 research/build_results.py
 ```
 
+[All strategy results](RESULTS.md) includes every strategy and separates correlation studies.
+
 Result matrices:
 
 - [`reports/mean-reversion/RESULTS.md`](reports/mean-reversion/RESULTS.md)
-
+- [`reports/cointegration/RESULTS.md`](reports/cointegration/RESULTS.md)
 - [`reports/weekly-pivot-limit/RESULTS.md`](reports/weekly-pivot-limit/RESULTS.md)
 - [`reports/ath-short/RESULTS.md`](reports/ath-short/RESULTS.md)
 - [`reports/ath-retest-volume-short/RESULTS.md`](reports/ath-retest-volume-short/RESULTS.md)
@@ -47,3 +52,6 @@ Result matrices:
 - [`reports/defended-pivot-hvn-limit/RESULTS.md`](reports/defended-pivot-hvn-limit/RESULTS.md)
 - [`reports/defended-pivot-hvn-reclaim/RESULTS.md`](reports/defended-pivot-hvn-reclaim/RESULTS.md)
 - [`reports/crypto-stat-arb/RESULTS.md`](reports/crypto-stat-arb/RESULTS.md)
+- [`reports/correlation-divergence/RESULTS.md`](reports/correlation-divergence/RESULTS.md)
+- [`reports/regression-spread/RESULTS.md`](reports/regression-spread/RESULTS.md)
+- [`reports/cross-asset-correlation/README.md`](reports/cross-asset-correlation/README.md)

@@ -529,7 +529,7 @@ def crypto_stat_arb_index() -> None:
     root = REPORTS / "crypto-stat-arb"
     latest = root / "latest" / "metadata.json"
     rows = [
-        "# Crypto Rolling Regression Stat-Arb Results",
+        "# Crypto Combined Stat-Arb Results",
         "",
         "[Strategy description](README.md)",
         "",
@@ -563,6 +563,33 @@ def crypto_stat_arb_index() -> None:
             "",
             "The Sharpe value is per-bar and is not annualized. Results include "
             "configured fees and slippage but exclude funding and market impact.",
+        ]
+    root.mkdir(parents=True, exist_ok=True)
+    (root / "RESULTS.md").write_text("\n".join(rows) + "\n", encoding="utf-8")
+
+
+def simple_pair_index(slug: str, title: str) -> None:
+    root = REPORTS / slug
+    latest = root / "latest" / "metadata.json"
+    rows = [f"# {title} Results", "", "[Strategy description](README.md)", ""]
+    if not latest.exists():
+        rows.append("No canonical backtest has been generated yet.")
+    else:
+        metadata = json.loads(latest.read_text(encoding="utf-8"))
+        summary = metadata["summary"]
+        rows += [
+            f"Pair `{metadata['pair']}`, interval `{metadata['interval']}`, "
+            f"period `{metadata['start']}` — `{metadata['end']}`.",
+            "",
+            "| Trades | Total return | Maximum drawdown | Bar Sharpe | Turnover |",
+            "|---:|---:|---:|---:|---:|",
+            f"| {summary['trades']} | {percent(summary['total_return'])} | "
+            f"{percent(summary['maximum_drawdown'])} | "
+            f"{decimal(summary['bar_sharpe'])} | {summary['turnover']:.2f} |",
+            "",
+            "Configuration: " + ", ".join(
+                f"`{key}={value}`" for key, value in metadata["config"].items()
+            ) + ".",
         ]
     root.mkdir(parents=True, exist_ok=True)
     (root / "RESULTS.md").write_text("\n".join(rows) + "\n", encoding="utf-8")
@@ -686,13 +713,16 @@ def ath_retest_grid_result() -> None:
     )
 
 
-def mean_reversion_index() -> None:
+def mean_reversion_index(
+    slug: str = "mean-reversion", title: str = "Mean Reversion",
+    launcher: str = "run_mean_reversion.py",
+) -> None:
     """Summarize saved runs without interpreting an empty selection as profit."""
-    root = REPORTS / "mean-reversion"
-    rows = ["# Mean Reversion Results", "", "[Strategy description](README.md)", ""]
+    root = REPORTS / slug
+    rows = [f"# {title} Results", "", "[Strategy description](README.md)", ""]
     paths = sorted(root.glob("*/metadata.json"))
     if not paths:
-        rows.append("No saved backtests found. Run run_mean_reversion.py first.")
+        rows.append(f"No saved backtests found. Run `{launcher}` first. Results are unavailable, not zero.")
     for path in paths:
         metadata = json.loads(path.read_text(encoding="utf-8"))
         symbols = metadata["symbols"]
@@ -722,8 +752,8 @@ def mean_reversion_index() -> None:
             ]
             for summary in summaries:
                 rows.append(
-                    f"| {summary['pair']} | {summary['trades']} | "
-                    f"{percent(summary['win_rate'])} | {percent(summary['total_return'])} | "
+                    f"| {summary.get('pair') or summary['y'] + '/' + summary['x']} | {summary['trades']} | "
+                    f"{percent(summary.get('win_rate'))} | {percent(summary['total_return'])} | "
                     f"{percent(summary['maximum_drawdown'])} | {decimal(summary['costs'])} |"
                 )
             rows += ["", "Each pair is an independent account, not a combined portfolio.", ""]
@@ -739,6 +769,65 @@ def mean_reversion_index() -> None:
     ]
     root.mkdir(parents=True, exist_ok=True)
     (root / "RESULTS.md").write_text("\n".join(rows) + "\n", encoding="utf-8")
+
+
+def research_index() -> None:
+    """Link all strategy summaries without comparing incompatible metrics."""
+    strategies = [
+        ("weekly-pivot-limit", "Weekly pivot limit", "Five sectors; TP 10/15/20%"),
+        ("ath-short", "ATH short", "Five sectors; aggregate equity results"),
+        ("ath-retest-volume-short", "ATH retest volume short", "Five sectors; correction/retest/stop grid"),
+        ("defended-pivot-long", "Defended pivot long", "Five sectors; defended-level entries"),
+        ("defended-pivot-hvn-limit", "Defended pivot HVN limit", "Five sectors; HVN limit entries"),
+        ("defended-pivot-hvn-reclaim", "Defended pivot HVN reclaim", "Five sectors; HVN reclaim entries"),
+        ("correlation-divergence", "Correlation divergence", "Equal-weight relative log-price spread"),
+        ("regression-spread", "Rolling regression spread", "Rolling OLS residual"),
+        ("crypto-stat-arb", "Combined stat-arb", "Rolling OLS with correlation filter"),
+        ("cointegration", "Engle–Granger cointegration", "Train-only selection; independent pair accounts"),
+        ("mean-reversion", "Mean Reversion", "Train-only selection with regime and risk controls"),
+    ]
+    rows = [
+        "# Strategy Results", "",
+        "Generated by `research/build_results.py` from locally saved experiment artifacts.", "",
+        "| Strategy | Scope | Results |", "|---|---|---|",
+    ]
+    for slug, title, scope in strategies:
+        rows.append(f"| {title} | {scope} | [Report](reports/{slug}/RESULTS.md) |")
+    rows += ["", "## Saved pair baselines", "",
+             "| Strategy | Pair / interval | Trades | Total return | Maximum drawdown |",
+             "|---|---|---:|---:|---:|"]
+    for slug, title, _ in strategies[6:9]:
+        path = REPORTS / slug / "latest" / "metadata.json"
+        if not path.exists():
+            rows.append(f"| {title} | No saved backtest | — | — | — |")
+            continue
+        metadata = json.loads(path.read_text(encoding="utf-8"))
+        summary = metadata["summary"]
+        rows.append(f"| {title} | {metadata['pair']} / {metadata['interval']} | "
+                    f"{summary['trades']} | {percent(summary['total_return'])} | "
+                    f"{percent(summary['maximum_drawdown'])} |")
+    rows += ["", "## Train-selected pair strategies", "",
+             "| Strategy / run | Candidate pairs | Selected pairs | Trades |",
+             "|---|---:|---:|---:|"]
+    for slug, title, _ in strategies[9:]:
+        paths = sorted((REPORTS / slug).glob("*/metadata.json"))
+        if not paths:
+            rows.append(f"| {title}: no saved backtest | — | — | — |")
+        for path in paths:
+            metadata = json.loads(path.read_text(encoding="utf-8"))
+            count = len(metadata["symbols"])
+            summaries = metadata["summaries"]
+            rows.append(f"| {title} / {path.parent.name} | {count * (count - 1) // 2} | "
+                        f"{len(summaries)} | {sum(s['trades'] for s in summaries)} |")
+    rows += ["", "Periods, costs, execution assumptions and sample sizes are detailed in each report. "
+             "Trade averages, pair-account returns and sector aggregates are different metrics; "
+             "these results do not form a performance ranking. Missing backtests are not zero returns. "
+             "No selected pairs means no trades, not evidence of profitable trading rules.", "",
+             "## Additional analysis", "",
+             "[Crypto/U.S. equity correlations](reports/cross-asset-correlation/README.md) "
+             "contains six correlation studies, not trading-strategy backtests.", "",
+             "[ATH retest parameter grid](reports/ath-retest-volume-short/GRID_RESULTS.md)."]
+    (REPORTS.parent / "RESULTS.md").write_text("\n".join(rows) + "\n", encoding="utf-8")
 
 
 def main() -> None:
@@ -770,6 +859,10 @@ def main() -> None:
     )
     crypto_stat_arb_index()
     mean_reversion_index()
+    mean_reversion_index("cointegration", "Engle–Granger Cointegration", "run_cointegration.py")
+    simple_pair_index("correlation-divergence", "Crypto Correlation Divergence")
+    simple_pair_index("regression-spread", "Crypto Rolling Regression Spread")
+    research_index()
 
 
 if __name__ == "__main__":
