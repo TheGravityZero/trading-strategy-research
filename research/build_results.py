@@ -686,6 +686,61 @@ def ath_retest_grid_result() -> None:
     )
 
 
+def mean_reversion_index() -> None:
+    """Summarize saved runs without interpreting an empty selection as profit."""
+    root = REPORTS / "mean-reversion"
+    rows = ["# Mean Reversion Results", "", "[Strategy description](README.md)", ""]
+    paths = sorted(root.glob("*/metadata.json"))
+    if not paths:
+        rows.append("No saved backtests found. Run run_mean_reversion.py first.")
+    for path in paths:
+        metadata = json.loads(path.read_text(encoding="utf-8"))
+        symbols = metadata["symbols"]
+        summaries = metadata["summaries"]
+        candidates = len(symbols) * (len(symbols) - 1) // 2
+        rows += [
+            f"## {path.parent.name}", "",
+            f"Train: `{metadata['start']}` to `{metadata['split']}`. "
+            f"Test: `{metadata['split']}` to `{metadata['end']}` (exclusive). "
+            f"Interval: `{metadata['interval']}`.", "",
+            "Symbols: " + ", ".join(f"`{symbol}`" for symbol in symbols) + ".", "",
+            "| Candidate pairs | Selected pairs | Completed trades |",
+            "|---:|---:|---:|",
+            f"| {candidates} | {len(summaries)} | "
+            f"{sum(summary['trades'] for summary in summaries)} |", "",
+        ]
+        if not summaries:
+            rows += [
+                "No pairs passed the train-only cointegration selection with Holm "
+                "correction. No trades were taken; this does not establish "
+                "profitability of the trading rules.", "",
+            ]
+        else:
+            rows += [
+                "| Pair | Trades | Win rate | Total return | Maximum drawdown | Costs |",
+                "|---|---:|---:|---:|---:|---:|",
+            ]
+            for summary in summaries:
+                rows.append(
+                    f"| {summary['pair']} | {summary['trades']} | "
+                    f"{percent(summary['win_rate'])} | {percent(summary['total_return'])} | "
+                    f"{percent(summary['maximum_drawdown'])} | {decimal(summary['costs'])} |"
+                )
+            rows += ["", "Each pair is an independent account, not a combined portfolio.", ""]
+        rows += [
+            "Configuration: " + ", ".join(
+                f"`{key}={value}`" for key, value in metadata["config"].items()
+            ) + ".", "",
+        ]
+    rows += [
+        "Signals execute at the next open. Fees and slippage are included; "
+        "funding, borrowing, market impact and margin liquidation are not modeled.",
+        "Raw CSV/JSON artifacts remain local and are excluded from Git.",
+    ]
+    root.mkdir(parents=True, exist_ok=True)
+    (root / "RESULTS.md").write_text("\n".join(rows) + "\n", encoding="utf-8")
+
+
 def main() -> None:
     for sector in SECTORS:
         sector_result(sector)
@@ -714,6 +769,7 @@ def main() -> None:
         "Entry after a sweep below the HVN and a close back above its lower boundary",
     )
     crypto_stat_arb_index()
+    mean_reversion_index()
 
 
 if __name__ == "__main__":

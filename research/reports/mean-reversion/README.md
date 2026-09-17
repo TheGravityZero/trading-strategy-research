@@ -1,5 +1,7 @@
 # Mean Reversion: Z-score спреда с контролем режима
 
+[Сводка результатов](RESULTS.md) автоматически обновляется через `research/build_results.py`.
+
 Реализация: `src/trading_strategy/strategies/mean_reversion.py`.
 Запуск: `research/runners/run_mean_reversion.py`. Зависимости: основной пакет
 и extra `research` (`statsmodels`). Используются только локальные ZIP-архивы Binance.

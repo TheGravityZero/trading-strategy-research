@@ -38,6 +38,8 @@ PYTHONPATH=src python3 research/build_results.py
 
 Result matrices:
 
+- [`reports/mean-reversion/RESULTS.md`](reports/mean-reversion/RESULTS.md)
+
 - [`reports/weekly-pivot-limit/RESULTS.md`](reports/weekly-pivot-limit/RESULTS.md)
 - [`reports/ath-short/RESULTS.md`](reports/ath-short/RESULTS.md)
 - [`reports/ath-retest-volume-short/RESULTS.md`](reports/ath-retest-volume-short/RESULTS.md)
