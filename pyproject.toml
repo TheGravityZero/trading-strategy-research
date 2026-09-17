@@ -14,6 +14,7 @@ dependencies = [
 
 [project.optional-dependencies]
 ml = ["torch>=2.1"]
+research = ["statsmodels>=0.14,<0.15"]
 
 [project.scripts]
 trading-strategy = "trading_strategy.cli:main"

@@ -8,6 +8,11 @@ system.
 
 ## Implemented strategies
 
+The [Mean Reversion strategy](research/reports/mean-reversion/README.md) adds
+rolling ADF regime checks, holding/loss limits and cooldown to train-selected
+spread trading. Run `research/runners/run_mean_reversion.py`; the saved
+ten-symbol experiment selected no pairs after Holm correction.
+
 | Strategy | Sectors | Current result | Launcher | Report |
 |---|---|---|---|---|
 | Weekly-pivot limit | crypto, it, semiconductors, oil, metals | Sector-dependent | `research/runners/run_weekly_pivot_limit.py` | `research/reports/weekly-pivot-limit/` |

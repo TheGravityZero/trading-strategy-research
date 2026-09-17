@@ -25,7 +25,11 @@ from .weekly_pivot_limit import (
 )
 from .stat_arb import StatArbConfig, backtest_stat_arb, build_pair_features
 
+from .mean_reversion import MeanReversionConfig, backtest_mean_reversion
+
 __all__ = [
+    "MeanReversionConfig",
+    "backtest_mean_reversion",
     "AthShortConfig",
     "backtest_ath_short",
     "run_ath_short_equities",
