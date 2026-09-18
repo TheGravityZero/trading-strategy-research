@@ -18,6 +18,11 @@ PYTHONPATH=src python3 research/runners/run_defended_pivot_hvn_reclaim.py \
 
 [Aggregate results](RESULTS.md)
 
+Дополнительный crypto-прогон на 4h за 2025-07-01—2026-07-01 дал по 2
+заполнения и 0 полностью закрытых сделок для TP 10%, 15% и 20%. Результаты
+сохранены в `crypto/4h-tp10/`, `crypto/4h-tp15/` и `crypto/4h-tp20/`; они не
+смешиваются с основной 15m-сводкой.
+
 - [crypto](crypto/result.md)
 - [IT](it/result.md)
 - [semiconductors](semiconductors/result.md)

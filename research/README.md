@@ -79,6 +79,13 @@ Both select pairs on train and execute close-based signals at the next open.
 Mean Reversion additionally applies a rolling stationarity gate, loss and
 holding limits, and a cooldown. See each strategy's report for assumptions.
 
+## 4h HVN experiment
+
+HVN Limit и HVN Reclaim дополнительно проверены на 4h криптосвечах. В каждом
+TP-варианте получено по 2 заполнения и 0 полностью закрытых сделок; результаты
+сохранены в соответствующих `crypto/4h-tp*/` каталогах и не смешиваются с 15m
+сводками.
+
 ## Execution and robustness audit
 
 [Audit results](reports/execution-audit/RESULTS.md) include actual-notional pair
